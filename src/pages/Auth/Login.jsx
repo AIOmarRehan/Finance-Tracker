@@ -1,25 +1,62 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { signInWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { auth } from '../../config/firebase';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 export default function Login() {
+  const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showResend, setShowResend] = useState(false);
+  const [captchaValue, setCaptchaValue] = useState(null);
   const { login, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
 
   async function handleSubmit(e) {
     e.preventDefault();
 
+    if (!recaptchaSiteKey) {
+      setError('reCAPTCHA is not configured. Please contact support.');
+      return;
+    }
+
+    if (!captchaValue) {
+      setError('Please complete the reCAPTCHA verification');
+      return;
+    }
+
     try {
       setError('');
+      setShowResend(false);
       setLoading(true);
       await login(email, password);
       navigate('/dashboard');
     } catch (error) {
-      setError('Failed to login. Please check your credentials.');
+      if (error.message === 'EMAIL_NOT_VERIFIED') {
+        setError('Please verify your email before logging in. Check your inbox for the verification link.');
+        setShowResend(true);
+      } else {
+        setError('Failed to login. Please check your credentials.');
+      }
+      console.error(error);
+    }
+    setLoading(false);
+  }
+
+  async function handleResendVerification() {
+    try {
+      setLoading(true);
+      const userCred = await signInWithEmailAndPassword(auth, email, password);
+      await sendEmailVerification(userCred.user);
+      setError('');
+      setShowResend(false);
+      alert('Verification email sent! Please check your inbox.');
+    } catch (error) {
+      setError('Failed to resend verification email. Please try again.');
       console.error(error);
     }
     setLoading(false);
@@ -38,9 +75,20 @@ export default function Login() {
     setLoading(false);
   }
 
+  function onCaptchaChange(value) {
+    setCaptchaValue(value);
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-primary-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full bg-white rounded-xl shadow-2xl p-8 space-y-8">
+        {/* Back to Home Link */}
+        <Link to="/" className="text-primary-600 hover:text-primary-700 font-semibold flex items-center gap-2">
+          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Back to Home
+        </Link>
         {/* Header */}
         <div className="text-center">
           <div className="flex justify-center">
@@ -56,6 +104,15 @@ export default function Login() {
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg" role="alert">
             <p className="text-sm">{error}</p>
+            {showResend && (
+              <button
+                onClick={handleResendVerification}
+                disabled={loading}
+                className="mt-2 text-sm font-semibold text-primary-600 hover:text-primary-700 underline"
+              >
+                Resend Verification Email
+              </button>
+            )}
           </div>
         )}
 
@@ -95,6 +152,14 @@ export default function Login() {
                 className="input-field"
                 placeholder="••••••••"
                 aria-label="Password"
+              />
+            </div>
+
+            {/* reCAPTCHA */}
+            <div className="flex justify-center">
+              <ReCAPTCHA
+                sitekey={recaptchaSiteKey || ''}
+                onChange={onCaptchaChange}
               />
             </div>
           </div>

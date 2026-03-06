@@ -1,12 +1,56 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
-  const navigate = useNavigate();
-
   return (
-    <footer className="bg-white shadow-md p-4 text-center">
-      <p className="text-gray-800">&copy; 2026 Finance Tracker. All rights reserved.</p>
+    <footer className="bg-gray-900 text-gray-300">
+      <div className="max-w-6xl mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+          {/* Brand */}
+          <div>
+            <h3 className="text-white font-bold text-lg mb-2">SpendMetra</h3>
+            <p className="text-sm text-gray-400">Managing your finances made simple and secure.</p>
+          </div>
+
+          {/* Links */}
+          <div>
+            <h4 className="text-white font-semibold mb-4">Quick Links</h4>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link to="/privacy-policy" className="text-gray-400 hover:text-white transition-colors">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/terms-of-service" className="text-gray-400 hover:text-white transition-colors">
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact-us" className="text-gray-400 hover:text-white transition-colors">
+                  Contact Us
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Contact */}
+          <div>
+            <h4 className="text-white font-semibold mb-4">Get in Touch</h4>
+            <p className="text-sm text-gray-400">Have questions? We'd love to hear from you.</p>
+            <p className="text-sm text-gray-400 mt-2">
+              <a href="mailto:ai.omar.rehan@gmail.com" className="text-primary-400 hover:text-primary-300">
+                ai.omar.rehan@gmail.com
+              </a>
+            </p>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="border-t border-gray-800 pt-8 text-center text-sm text-gray-400">
+          <p>&copy; 2026 SpendMetra. All rights reserved.</p>
+        </div>
+      </div>
     </footer>
   );
 };

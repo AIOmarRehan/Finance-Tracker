@@ -4,6 +4,7 @@ import Navbar from '../../components/Layout/Navbar';
 import Footer from '../../components/Layout/Footer';
 import { useAuth } from '../../contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
+import './Home.css';
 
 const Home = () => {
   const { currentUser } = useAuth();
@@ -15,22 +16,182 @@ const Home = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Header */}
       <Navbar />
 
-      {/* Main Content */}
-      <main className="flex-grow flex items-center justify-center bg-gray-100">
-        <div className="text-center">
-          <h2 className="text-3xl font-semibold mb-4">Welcome to Finance Tracker</h2>
-          <p className="text-lg text-gray-700 mb-6">Track your expenses, set goals, and manage your finances effectively.</p>
-          <div>
-            <Link to="/signup" className="btn-primary mr-4">Get Started</Link>
-            <Link to="/login" className="btn-secondary">Log In</Link>
+      <main className="flex-grow bg-white">
+        {/* ===== Hero Section ===== */}
+        <section className="hero-section bg-gradient-to-r from-primary-600 to-primary-700 text-white py-20 px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            <h1 className="text-5xl font-bold mb-6">Take Control of Your Money</h1>
+            <p className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
+              SpendMetra helps you monitor your expenses, track income, and understand your spending habits through a simple and organized dashboard.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/signup" className="btn-primary-lg">
+                Get Started
+              </Link>
+              <Link to="/login" className="btn-secondary-lg">
+                Log In
+              </Link>
+            </div>
           </div>
-        </div>
+        </section>
+
+        {/* ===== Features Section ===== */}
+        <section className="features-section py-16 px-4 bg-gray-50">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-4xl font-bold text-center mb-12 text-gray-900">Key Features</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {/* Feature 1 */}
+              <div className="feature-card bg-white p-6 rounded-lg shadow-md hover:shadow-lg">
+                <div className="feature-icon mb-4">
+                  <svg className="h-12 w-12 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-semibold mb-2 text-gray-900">Track Expenses</h3>
+                <p className="text-gray-600">Easily record and categorize your daily expenses to understand where your money goes.</p>
+              </div>
+
+              {/* Feature 2 */}
+              <div className="feature-card bg-white p-6 rounded-lg shadow-md hover:shadow-lg">
+                <div className="feature-icon mb-4">
+                  <img src="/icons/monitor-income.svg" alt="Monitor Income" className="h-12 w-12" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2 text-gray-900">Monitor Income</h3>
+                <p className="text-gray-600">Keep track of different income sources and manage multiple revenue streams.</p>
+              </div>
+
+              {/* Feature 3 */}
+              <div className="feature-card bg-white p-6 rounded-lg shadow-md hover:shadow-lg">
+                <div className="feature-icon mb-4">
+                  <svg className="h-12 w-12 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-semibold mb-2 text-gray-900">Visual Reports</h3>
+                <p className="text-gray-600">Charts and summaries help you understand your spending patterns and financial habits.</p>
+              </div>
+
+              {/* Feature 4 */}
+              <div className="feature-card bg-white p-6 rounded-lg shadow-md hover:shadow-lg">
+                <div className="feature-icon mb-4">
+                  <svg className="h-12 w-12 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-semibold mb-2 text-gray-900">Smart Organization</h3>
+                <p className="text-gray-600">Transactions organized by categories and dates for easy tracking and management.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ===== How It Works Section ===== */}
+        <section className="how-it-works py-16 px-4">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-4xl font-bold text-center mb-12 text-gray-900">How It Works</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* Step 1 */}
+              <div className="flex flex-col items-center text-center">
+                <div className="step-circle mb-4">
+                  <span className="text-2xl font-bold text-white">1</span>
+                </div>
+                <h3 className="text-xl font-semibold mb-2 text-gray-900">Create an Account</h3>
+                <p className="text-gray-600">Sign up in minutes to start managing your finances securely.</p>
+              </div>
+
+              {/* Step 2 */}
+              <div className="flex flex-col items-center text-center">
+                <div className="step-circle mb-4">
+                  <span className="text-2xl font-bold text-white">2</span>
+                </div>
+                <h3 className="text-xl font-semibold mb-2 text-gray-900">Add Transactions</h3>
+                <p className="text-gray-600">Record your income and expenses with detailed categories and notes.</p>
+              </div>
+
+              {/* Step 3 */}
+              <div className="flex flex-col items-center text-center">
+                <div className="step-circle mb-4">
+                  <span className="text-2xl font-bold text-white">3</span>
+                </div>
+                <h3 className="text-xl font-semibold mb-2 text-gray-900">Analyze Spending</h3>
+                <p className="text-gray-600">View insights and comprehensive financial summaries in your dashboard.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ===== Benefits Section ===== */}
+        <section className="benefits-section py-16 px-4 bg-gray-50">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-4xl font-bold text-center mb-12 text-gray-900">Why Choose SpendMetra?</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="benefit-item flex items-start">
+                <div className="benefit-check mr-4 flex-shrink-0">
+                  <svg className="h-6 w-6 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-1">Simple & Intuitive</h3>
+                  <p className="text-gray-600">User-friendly interface designed for everyone, from beginners to finance enthusiasts.</p>
+                </div>
+              </div>
+
+              <div className="benefit-item flex items-start">
+                <div className="benefit-check mr-4 flex-shrink-0">
+                  <svg className="h-6 w-6 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-1">Secure & Private</h3>
+                  <p className="text-gray-600">Your financial data is protected with industry-standard security and encryption.</p>
+                </div>
+              </div>
+
+              <div className="benefit-item flex items-start">
+                <div className="benefit-check mr-4 flex-shrink-0">
+                  <svg className="h-6 w-6 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-1">Clear Insights</h3>
+                  <p className="text-gray-600">Get detailed financial insights and reports to make better financial decisions.</p>
+                </div>
+              </div>
+
+              <div className="benefit-item flex items-start">
+                <div className="benefit-check mr-4 flex-shrink-0">
+                  <svg className="h-6 w-6 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-1">Multi-Device Access</h3>
+                  <p className="text-gray-600">Access your finances anytime, anywhere from any device with secure login.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ===== Final CTA Section ===== */}
+        <section className="cta-section bg-gradient-to-r from-primary-600 to-primary-700 text-white py-16 px-4">
+          <div className="max-w-2xl mx-auto text-center">
+            <h2 className="text-4xl font-bold mb-4">Ready to Take Control?</h2>
+            <p className="text-xl text-primary-100 mb-8">
+              Start managing your finances today. It's free and takes less than a minute to create an account.
+            </p>
+            <Link to="/signup" className="btn-primary-lg">
+              Create Free Account
+            </Link>
+          </div>
+        </section>
       </main>
 
-      {/* Footer */}
       <Footer />
     </div>
   );

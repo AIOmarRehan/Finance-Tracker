@@ -24,6 +24,7 @@ export default function Sidebar({ isOpen, onClose }) {
       {/* Sidebar */}
       <aside
         className={`fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-30 overflow-y-auto
+          md:static md:top-auto md:left-auto md:h-auto md:min-h-[calc(100vh-4rem)] md:shadow-none md:border-r md:border-gray-200 md:z-auto
           ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
         role="navigation"
         aria-label="Sidebar navigation"

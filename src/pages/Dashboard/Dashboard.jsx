@@ -69,28 +69,28 @@ export default function Dashboard() {
         <SummaryCard
           title="Total Balance"
           value={formatCurrency(totals.balance)}
-          icon="💰"
+          icon={<img src="/icons/total-balance.svg" alt="Total Balance" className="h-8 w-8" />}
           color="blue"
           trend={totals.balance >= 0 ? 'up' : 'down'}
         />
         <SummaryCard
           title="Income"
           value={formatCurrency(totals.income)}
-          icon="📈"
+          icon={<img src="/icons/income.svg" alt="Income" className="h-8 w-8" />}
           color="green"
           trend="up"
         />
         <SummaryCard
           title="Expenses"
           value={formatCurrency(totals.expenses)}
-          icon="📉"
+          icon={<img src="/icons/expenses.svg" alt="Expenses" className="h-8 w-8" />}
           color="red"
           trend="down"
         />
         <SummaryCard
           title="Savings Progress"
           value={`${savingsProgress.toFixed(1)}%`}
-          icon="🎯"
+          icon={<img src="/icons/savings-progress.svg" alt="Savings Progress" className="h-8 w-8" />}
           color="purple"
           subtitle={`${formatCurrency(totalSaved)} of ${formatCurrency(totalSavingsGoal)}`}
         />

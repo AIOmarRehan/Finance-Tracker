@@ -28,10 +28,5 @@ service cloud.firestore {
       allow create: if isOwnerByRequest();
       allow read, update, delete: if isOwnerByResource();
     }
-
-    match /contactMessages/{messageId} {
-      allow create: if true; // Allow anyone to create contact messages
-      allow read, update, delete: if false; // Only admins (through Firebase Console)
-    }
   }
 }

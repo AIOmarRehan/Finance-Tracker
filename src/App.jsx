@@ -12,6 +12,9 @@ import Reports from './pages/Reports/Reports';
 import Profile from './pages/Profile/Profile';
 import Loading from './components/Common/Loading';
 import Home from './pages/Home/Home';
+import PrivacyPolicy from './pages/Legal/PrivacyPolicy';
+import TermsOfService from './pages/Legal/TermsOfService';
+import ContactUs from './pages/Legal/ContactUs';
 
 // Protected Route wrapper
 function ProtectedRoute({ children }) {
@@ -52,6 +55,9 @@ function App() {
               <Signup />
             </PublicRoute>
           } />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/contact-us" element={<ContactUs />} />
           
           {/* Protected routes */}
           <Route path="/app" element={

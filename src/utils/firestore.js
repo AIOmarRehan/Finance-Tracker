@@ -3,34 +3,149 @@ import {
   addDoc, 
   updateDoc, 
   deleteDoc, 
+  deleteField,
+  getDoc,
   doc, 
   query, 
   where, 
   getDocs,
-  orderBy,
   Timestamp 
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
+import { encryptPayload, decryptPayload } from './crypto';
+
+function normalizeDateValue(value) {
+  if (!value) return null;
+  if (value.toDate) return value.toDate().toISOString();
+  if (value instanceof Date) return value.toISOString();
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString();
+}
+
+function getTimestampForSort(value) {
+  if (!value) return 0;
+  if (value.toDate) return value.toDate().getTime();
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? 0 : parsed.getTime();
+}
+
+async function migrateLegacyTransaction(userId, transactionRef, current) {
+  const payload = await encryptPayload(userId, {
+    description: current.description || '',
+    amount: Number(current.amount) || 0,
+    type: current.type || 'expense',
+    category: current.category || '',
+    date: normalizeDateValue(current.date) || new Date().toISOString(),
+    notes: current.notes || ''
+  });
+
+  await updateDoc(transactionRef, {
+    payload,
+    updatedAt: Timestamp.now(),
+    description: deleteField(),
+    amount: deleteField(),
+    type: deleteField(),
+    category: deleteField(),
+    date: deleteField(),
+    notes: deleteField()
+  });
+}
+
+async function migrateLegacyCategory(userId, categoryRef, current) {
+  const payload = await encryptPayload(userId, {
+    name: current.name || '',
+    type: current.type || 'expense',
+    color: current.color || '#64748b'
+  });
+
+  await updateDoc(categoryRef, {
+    payload,
+    updatedAt: Timestamp.now(),
+    name: deleteField(),
+    type: deleteField(),
+    color: deleteField()
+  });
+}
+
+async function migrateLegacyGoal(userId, goalRef, current) {
+  const payload = await encryptPayload(userId, {
+    name: current.name || '',
+    targetAmount: Number(current.targetAmount) || 0,
+    currentAmount: Number(current.currentAmount) || 0,
+    targetDate: normalizeDateValue(current.targetDate),
+    description: current.description || ''
+  });
+
+  await updateDoc(goalRef, {
+    payload,
+    updatedAt: Timestamp.now(),
+    name: deleteField(),
+    targetAmount: deleteField(),
+    currentAmount: deleteField(),
+    targetDate: deleteField(),
+    description: deleteField()
+  });
+}
 
 // ============ TRANSACTIONS ============
 
 export async function getTransactions(userId) {
   const q = query(
     collection(db, 'transactions'),
-    where('userId', '==', userId),
-    orderBy('date', 'desc')
+    where('userId', '==', userId)
   );
+
   const snapshot = await getDocs(q);
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  const rows = await Promise.all(snapshot.docs.map(async (snapshotDoc) => {
+    const data = snapshotDoc.data();
+
+    if (data.payload) {
+      try {
+        const decrypted = await decryptPayload(userId, data.payload);
+        if (!decrypted) return null;
+
+        return {
+          id: snapshotDoc.id,
+          ...decrypted,
+          createdAt: data.createdAt,
+          updatedAt: data.updatedAt
+        };
+      } catch (error) {
+        console.error('Failed to decrypt transaction:', error);
+        return null;
+      }
+    }
+
+    try {
+      await migrateLegacyTransaction(userId, doc(db, 'transactions', snapshotDoc.id), data);
+    } catch (error) {
+      console.error('Failed to migrate legacy transaction:', error);
+    }
+
+    return { id: snapshotDoc.id, ...data };
+  }));
+
+  return rows
+    .filter(Boolean)
+    .sort((a, b) => getTimestampForSort(b.date) - getTimestampForSort(a.date));
 }
 
 export async function addTransaction(userId, transaction) {
   try {
+    const payload = await encryptPayload(userId, {
+      description: transaction.description || '',
+      amount: Number(transaction.amount) || 0,
+      type: transaction.type || 'expense',
+      category: transaction.category || '',
+      date: normalizeDateValue(transaction.date) || new Date().toISOString(),
+      notes: transaction.notes || ''
+    });
+
     const transactionData = {
-      ...transaction,
       userId,
-      date: transaction.date instanceof Date ? Timestamp.fromDate(transaction.date) : Timestamp.now(),
-      createdAt: Timestamp.now()
+      payload,
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now()
     };
     return await addDoc(collection(db, 'transactions'), transactionData);
   } catch (error) {
@@ -41,10 +156,40 @@ export async function addTransaction(userId, transaction) {
 
 export async function updateTransaction(transactionId, updates) {
   const transactionRef = doc(db, 'transactions', transactionId);
-  if (updates.date && updates.date instanceof Date) {
-    updates.date = Timestamp.fromDate(updates.date);
+  const transactionSnap = await getDoc(transactionRef);
+
+  if (!transactionSnap.exists()) {
+    throw new Error('Transaction not found');
   }
-  return await updateDoc(transactionRef, updates);
+
+  const current = transactionSnap.data();
+  const userId = current.userId;
+
+  let baseData;
+  if (current.payload) {
+    baseData = await decryptPayload(userId, current.payload);
+  } else {
+    baseData = {
+      description: current.description || '',
+      amount: Number(current.amount) || 0,
+      type: current.type || 'expense',
+      category: current.category || '',
+      date: normalizeDateValue(current.date) || new Date().toISOString(),
+      notes: current.notes || ''
+    };
+  }
+
+  const merged = {
+    ...baseData,
+    ...updates,
+    amount: updates.amount !== undefined ? Number(updates.amount) : Number(baseData.amount) || 0,
+    date: updates.date !== undefined
+      ? (normalizeDateValue(updates.date) || baseData.date || new Date().toISOString())
+      : baseData.date
+  };
+
+  const payload = await encryptPayload(userId, merged);
+  return await updateDoc(transactionRef, { payload, updatedAt: Timestamp.now() });
 }
 
 export async function deleteTransaction(transactionId) {
@@ -58,16 +203,53 @@ export async function getCategories(userId) {
     collection(db, 'categories'),
     where('userId', '==', userId)
   );
+
   const snapshot = await getDocs(q);
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  const rows = await Promise.all(snapshot.docs.map(async (snapshotDoc) => {
+    const data = snapshotDoc.data();
+
+    if (data.payload) {
+      try {
+        const decrypted = await decryptPayload(userId, data.payload);
+        if (!decrypted) return null;
+
+        return {
+          id: snapshotDoc.id,
+          ...decrypted,
+          createdAt: data.createdAt,
+          updatedAt: data.updatedAt
+        };
+      } catch (error) {
+        console.error('Failed to decrypt category:', error);
+        return null;
+      }
+    }
+
+    try {
+      await migrateLegacyCategory(userId, doc(db, 'categories', snapshotDoc.id), data);
+    } catch (error) {
+      console.error('Failed to migrate legacy category:', error);
+    }
+
+    return { id: snapshotDoc.id, ...data };
+  }));
+
+  return rows.filter(Boolean);
 }
 
 export async function addCategory(userId, category) {
   try {
+    const payload = await encryptPayload(userId, {
+      name: category.name || '',
+      type: category.type || 'expense',
+      color: category.color || '#64748b'
+    });
+
     const categoryData = {
-      ...category,
       userId,
-      createdAt: Timestamp.now()
+      payload,
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now()
     };
     return await addDoc(collection(db, 'categories'), categoryData);
   } catch (error) {
@@ -78,7 +260,28 @@ export async function addCategory(userId, category) {
 
 export async function updateCategory(categoryId, updates) {
   const categoryRef = doc(db, 'categories', categoryId);
-  return await updateDoc(categoryRef, updates);
+  const categorySnap = await getDoc(categoryRef);
+
+  if (!categorySnap.exists()) {
+    throw new Error('Category not found');
+  }
+
+  const current = categorySnap.data();
+  const userId = current.userId;
+
+  let baseData;
+  if (current.payload) {
+    baseData = await decryptPayload(userId, current.payload);
+  } else {
+    baseData = {
+      name: current.name || '',
+      type: current.type || 'expense',
+      color: current.color || '#64748b'
+    };
+  }
+
+  const payload = await encryptPayload(userId, { ...baseData, ...updates });
+  return await updateDoc(categoryRef, { payload, updatedAt: Timestamp.now() });
 }
 
 export async function deleteCategory(categoryId) {
@@ -92,18 +295,55 @@ export async function getGoals(userId) {
     collection(db, 'goals'),
     where('userId', '==', userId)
   );
+
   const snapshot = await getDocs(q);
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  const rows = await Promise.all(snapshot.docs.map(async (snapshotDoc) => {
+    const data = snapshotDoc.data();
+
+    if (data.payload) {
+      try {
+        const decrypted = await decryptPayload(userId, data.payload);
+        if (!decrypted) return null;
+
+        return {
+          id: snapshotDoc.id,
+          ...decrypted,
+          createdAt: data.createdAt,
+          updatedAt: data.updatedAt
+        };
+      } catch (error) {
+        console.error('Failed to decrypt goal:', error);
+        return null;
+      }
+    }
+
+    try {
+      await migrateLegacyGoal(userId, doc(db, 'goals', snapshotDoc.id), data);
+    } catch (error) {
+      console.error('Failed to migrate legacy goal:', error);
+    }
+
+    return { id: snapshotDoc.id, ...data };
+  }));
+
+  return rows.filter(Boolean);
 }
 
 export async function addGoal(userId, goal) {
   try {
+    const payload = await encryptPayload(userId, {
+      name: goal.name || '',
+      targetAmount: Number(goal.targetAmount) || 0,
+      currentAmount: Number(goal.currentAmount) || 0,
+      targetDate: normalizeDateValue(goal.targetDate),
+      description: goal.description || ''
+    });
+
     const goalData = {
-      ...goal,
       userId,
-      currentAmount: 0,
-      targetDate: goal.targetDate instanceof Date ? Timestamp.fromDate(goal.targetDate) : null,
-      createdAt: Timestamp.now()
+      payload,
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now()
     };
     return await addDoc(collection(db, 'goals'), goalData);
   } catch (error) {
@@ -114,10 +354,38 @@ export async function addGoal(userId, goal) {
 
 export async function updateGoal(goalId, updates) {
   const goalRef = doc(db, 'goals', goalId);
-  if (updates.targetDate && updates.targetDate instanceof Date) {
-    updates.targetDate = Timestamp.fromDate(updates.targetDate);
+
+  const goalSnap = await getDoc(goalRef);
+  if (!goalSnap.exists()) {
+    throw new Error('Goal not found');
   }
-  return await updateDoc(goalRef, updates);
+
+  const current = goalSnap.data();
+  const userId = current.userId;
+
+  let baseData;
+  if (current.payload) {
+    baseData = await decryptPayload(userId, current.payload);
+  } else {
+    baseData = {
+      name: current.name || '',
+      targetAmount: Number(current.targetAmount) || 0,
+      currentAmount: Number(current.currentAmount) || 0,
+      targetDate: normalizeDateValue(current.targetDate),
+      description: current.description || ''
+    };
+  }
+
+  const merged = {
+    ...baseData,
+    ...updates,
+    targetAmount: updates.targetAmount !== undefined ? Number(updates.targetAmount) : Number(baseData.targetAmount) || 0,
+    currentAmount: updates.currentAmount !== undefined ? Number(updates.currentAmount) : Number(baseData.currentAmount) || 0,
+    targetDate: updates.targetDate !== undefined ? normalizeDateValue(updates.targetDate) : baseData.targetDate
+  };
+
+  const payload = await encryptPayload(userId, merged);
+  return await updateDoc(goalRef, { payload, updatedAt: Timestamp.now() });
 }
 
 export async function deleteGoal(goalId) {

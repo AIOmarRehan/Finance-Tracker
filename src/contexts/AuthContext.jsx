@@ -8,7 +8,8 @@ import {
   signInWithPopup,
   updateProfile,
   updatePassword,
-  updateEmail
+  updateEmail,
+  sendEmailVerification
 } from 'firebase/auth';
 import { auth } from '../config/firebase';
 
@@ -29,17 +30,34 @@ export function AuthProvider({ children }) {
   // Sign up with email and password
   function signup(email, password, displayName) {
     return createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
+      .then(async (userCredential) => {
         if (displayName) {
-          return updateProfile(userCredential.user, { displayName });
+          await updateProfile(userCredential.user, { displayName });
         }
+        // Send email verification
+        await sendEmailVerification(userCredential.user);
         return userCredential;
       });
   }
 
   // Login with email and password
   function login(email, password) {
-    return signInWithEmailAndPassword(auth, email, password);
+    return signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Check if email is verified
+        if (!userCredential.user.emailVerified) {
+          throw new Error('EMAIL_NOT_VERIFIED');
+        }
+        return userCredential;
+      });
+  }
+
+  // Resend email verification
+  function resendVerificationEmail() {
+    if (currentUser) {
+      return sendEmailVerification(currentUser);
+    }
+    return Promise.reject(new Error('No user logged in'));
   }
 
   // Logout
@@ -86,7 +104,8 @@ export function AuthProvider({ children }) {
     signInWithGoogle,
     updateUserProfile,
     updateUserEmail,
-    updateUserPassword
+    updateUserPassword,
+    resendVerificationEmail
   };
 
   return (

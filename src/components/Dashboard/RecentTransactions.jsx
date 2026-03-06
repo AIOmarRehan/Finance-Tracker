@@ -28,8 +28,8 @@ export default function RecentTransactions({ transactions }) {
     <div className="card">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold text-gray-900">Recent Transactions</h2>
-        <button
-          onClick={() => navigate('/transactions')}
+          <button
+            onClick={() => navigate('/app/transactions')}
           className="text-sm text-primary-600 hover:text-primary-700 font-medium"
         >
           View All →
@@ -46,9 +46,11 @@ export default function RecentTransactions({ transactions }) {
               <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                 transaction.type === 'income' ? 'bg-green-100' : 'bg-red-100'
               }`}>
-                <span className="text-lg" aria-hidden="true">
-                  {transaction.type === 'income' ? '📈' : '📉'}
-                </span>
+                  <img
+                    src={transaction.type === 'income' ? '/icons/income.svg' : '/icons/expenses.svg'}
+                    alt={transaction.type === 'income' ? 'Income' : 'Expense'}
+                    className="h-5 w-5"
+                  />
               </div>
               <div>
                 <p className="font-medium text-gray-900">{transaction.description}</p>
