@@ -44,7 +44,10 @@ export function AuthProvider({ children }) {
   function login(email, password) {
     return signInWithEmailAndPassword(auth, email, password)
       .then(async (userCredential) => {
-        // Check if email is verified
+        // Reload user to get fresh emailVerified status
+        await userCredential.user.reload();
+        
+        // Check if email is verified (using fresh data)
         if (!userCredential.user.emailVerified) {
           // Sign out immediately so unverified users cannot pass route guards
           await signOut(auth);
@@ -89,13 +92,20 @@ export function AuthProvider({ children }) {
   }
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      // Don't set currentUser for unverified email/password users
-      // This prevents PublicRoute from redirecting before verification alert shows
-      if (user && !user.emailVerified && user.providerData.some(p => p.providerId === 'password')) {
-        setCurrentUser(null);
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // Reload user to get fresh emailVerified status
+        await user.reload();
+        
+        // Don't set currentUser for unverified email/password users
+        // This prevents PublicRoute from redirecting before verification alert shows
+        if (!user.emailVerified && user.providerData.some(p => p.providerId === 'password')) {
+          setCurrentUser(null);
+        } else {
+          setCurrentUser(user);
+        }
       } else {
-        setCurrentUser(user);
+        setCurrentUser(null);
       }
       setLoading(false);
     });
