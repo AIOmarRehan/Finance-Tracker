@@ -5,6 +5,7 @@ import ReCAPTCHA from 'react-google-recaptcha';
 
 export default function Signup() {
   const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
+  const isRecaptchaConfigured = Boolean(recaptchaSiteKey);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -194,12 +195,18 @@ export default function Signup() {
             </div>
 
             {/* reCAPTCHA */}
-            <div className="flex justify-center">
-              <ReCAPTCHA
-                sitekey={recaptchaSiteKey || ''}
-                onChange={onCaptchaChange}
-              />
-            </div>
+            {isRecaptchaConfigured ? (
+              <div className="flex justify-center">
+                <ReCAPTCHA
+                  sitekey={recaptchaSiteKey}
+                  onChange={onCaptchaChange}
+                />
+              </div>
+            ) : (
+              <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-3 py-2 rounded-lg text-sm">
+                reCAPTCHA is not configured for this deployment.
+              </div>
+            )}
           </div>
 
           <button

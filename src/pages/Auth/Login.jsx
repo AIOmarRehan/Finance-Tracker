@@ -7,6 +7,7 @@ import ReCAPTCHA from 'react-google-recaptcha';
 
 export default function Login() {
   const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
+  const isRecaptchaConfigured = Boolean(recaptchaSiteKey);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -156,12 +157,18 @@ export default function Login() {
             </div>
 
             {/* reCAPTCHA */}
-            <div className="flex justify-center">
-              <ReCAPTCHA
-                sitekey={recaptchaSiteKey || ''}
-                onChange={onCaptchaChange}
-              />
-            </div>
+            {isRecaptchaConfigured ? (
+              <div className="flex justify-center">
+                <ReCAPTCHA
+                  sitekey={recaptchaSiteKey}
+                  onChange={onCaptchaChange}
+                />
+              </div>
+            ) : (
+              <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-3 py-2 rounded-lg text-sm">
+                reCAPTCHA is not configured for this deployment.
+              </div>
+            )}
           </div>
 
           <button
