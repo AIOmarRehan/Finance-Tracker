@@ -11,6 +11,7 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [verificationRequired, setVerificationRequired] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showResend, setShowResend] = useState(false);
   const [captchaValue, setCaptchaValue] = useState(null);
@@ -34,15 +35,18 @@ export default function Login() {
 
     try {
       setError('');
+      setVerificationRequired(false);
       setShowResend(false);
       setLoading(true);
       await login(email, password);
       navigate('/app/dashboard');
     } catch (error) {
       if (error.message === 'EMAIL_NOT_VERIFIED') {
-        setError('You must verify your email first.');
+        setVerificationRequired(true);
+        setError('');
         setShowResend(true);
       } else {
+        setVerificationRequired(false);
         setError('Failed to login. Please check your credentials.');
       }
       console.error(error);
@@ -107,6 +111,14 @@ export default function Login() {
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg" role="alert">
             <p className="text-sm">{error}</p>
+          </div>
+        )}
+
+        {/* Verification Required Alert */}
+        {verificationRequired && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg" role="alert">
+            <p className="text-sm font-semibold">Email Verification Required</p>
+            <p className="text-sm">You must verify your email first. Please check your email (including Spam/Junk), click the verification link, then try to log in again.</p>
             {showResend && (
               <button
                 onClick={handleResendVerification}
