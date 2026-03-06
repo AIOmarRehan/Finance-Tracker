@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { signInWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { signInWithEmailAndPassword, sendEmailVerification, signOut } from 'firebase/auth';
 import { auth } from '../../config/firebase';
 import ReCAPTCHA from 'react-google-recaptcha';
 
@@ -42,6 +42,9 @@ export default function Login() {
         setVerificationRequired(true);
         setError('');
         setShowResend(true);
+      } else if (error?.code === 'auth/too-many-requests') {
+        setVerificationRequired(false);
+        setError('Too many login attempts. Please wait a few minutes before trying again.');
       } else {
         setVerificationRequired(false);
         setError('Failed to login. Please check your credentials.');
@@ -54,16 +57,27 @@ export default function Login() {
   async function handleResendVerification() {
     try {
       setLoading(true);
+      setError('');
       const userCred = await signInWithEmailAndPassword(auth, email, password);
       await sendEmailVerification(userCred.user);
-      setError('');
+      // Sign out after sending verification email
+      await signOut(auth);
       setShowResend(false);
-      alert('Verification email sent! Please check your inbox.');
+      setVerificationRequired(true);
+      alert('Verification email sent! Please check your inbox (including Spam/Junk folder).');
     } catch (error) {
-      setError('Failed to resend verification email. Please try again.');
       console.error(error);
+      // Sign out just in case
+      try { await signOut(auth); } catch (e) { /* ignore */ }
+      
+      if (error.code === 'auth/too-many-requests') {
+        setError('Too many attempts. Please wait a few minutes before trying again.');
+      } else {
+        setError('Failed to resend verification email. Please try again later.');
+      }
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   async function handleGoogleSignIn() {
