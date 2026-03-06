@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Personal Finance Tracker
 
 A modern web application to track your finances, manage transactions, set savings goals, and view visual reports.
@@ -95,3 +96,6 @@ firebase deploy
 ## License
 
 MIT
+=======
+# Finance-Tracker
+>>>>>>> 70b78d5193a65fc12d3843919d0e6d73e34bd2c2
