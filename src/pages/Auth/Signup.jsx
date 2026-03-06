@@ -28,12 +28,8 @@ export default function Signup() {
   async function handleSubmit(e) {
     e.preventDefault();
 
-    if (!recaptchaSiteKey) {
-      setError('reCAPTCHA is not configured. Please contact support.');
-      return;
-    }
-
-    if (!captchaValue) {
+    // Only enforce reCAPTCHA if it's configured
+    if (isRecaptchaConfigured && !captchaValue) {
       setError('Please complete the reCAPTCHA verification');
       return;
     }
