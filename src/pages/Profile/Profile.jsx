@@ -3,7 +3,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 export default function Profile() {
-  const { currentUser, updateUserProfile, updateUserEmail, updateUserPassword } = useAuth();
+  const { currentUser, updateUserProfile, updateUserEmail, updateUserPassword, logout } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('profile');
   const [loading, setLoading] = useState(false);
@@ -132,6 +132,8 @@ export default function Profile() {
           </nav>
         </div>
 
+        <div className="max-h-[60vh] overflow-y-auto p-4">
+
         {/* Profile Tab */}
         {activeTab === 'profile' && (
           <form onSubmit={handleUpdateProfile} className="space-y-6">
@@ -177,17 +179,23 @@ export default function Profile() {
         {/* Email Tab */}
         {activeTab === 'email' && (
           <form onSubmit={handleUpdateEmail} className="space-y-6">
-            <div>
-              <label htmlFor="currentEmail" className="block text-sm font-medium text-gray-700 mb-1">
-                Current Email
-              </label>
-              <input
-                type="email"
-                id="currentEmail"
-                value={currentUser?.email || ''}
-                disabled
-                className="input-field bg-gray-50 cursor-not-allowed"
-              />
+            <div className="mt-6 max-h-[60vh] overflow-y-auto">
+              <h3 className="text-lg font-medium">Account Details</h3>
+              <div className="mt-4 grid grid-cols-1 gap-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-500">Email</p>
+                    <p className="text-gray-800">{currentUser?.email}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={logout}
+                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                  >
+                    Logout
+                  </button>
+                </div>
+              </div>
             </div>
 
             <div>
@@ -207,7 +215,7 @@ export default function Profile() {
 
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
               <p className="text-sm text-yellow-800">
-                ⚠️ You may need to log in again after changing your email
+                You may need to log in again after changing your email
               </p>
             </div>
 
@@ -256,7 +264,7 @@ export default function Profile() {
 
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
               <p className="text-sm text-yellow-800">
-                ⚠️ You may need to log in again after changing your password
+                You may need to log in again after changing your password
               </p>
             </div>
 
@@ -269,6 +277,7 @@ export default function Profile() {
             </button>
           </form>
         )}
+        </div>
       </div>
     </div>
   );

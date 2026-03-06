@@ -66,7 +66,7 @@ export default function CategoryList({ categories, onEdit, onDelete }) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-h-[60vh] overflow-y-auto">
       <CategorySection title="Income Categories" items={incomeCategories} color="green" />
       <CategorySection title="Expense Categories" items={expenseCategories} color="red" />
     </div>

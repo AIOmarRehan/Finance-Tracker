@@ -10,6 +10,9 @@ export default function Layout() {
     <div className="min-h-screen bg-gray-50">
       <Navbar onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
       
+      {/* Spacer for fixed navbar */}
+      <div className="h-16"></div>
+      
       <div className="flex">
         <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         

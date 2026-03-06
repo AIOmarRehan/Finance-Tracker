@@ -203,7 +203,7 @@ export default function Reports() {
 
       {/* Charts */}
       {filteredTransactions.length > 0 ? (
-        <>
+        <div className="max-h-[70vh] overflow-y-auto space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <ExpenseChart data={expenseByCategory} />
             <TrendChart transactions={filteredTransactions} />
@@ -213,7 +213,7 @@ export default function Reports() {
             <CategoryBreakdown title="Expense Breakdown" data={expenseByCategory} type="expense" />
             <CategoryBreakdown title="Income Breakdown" data={incomeByCategory} type="income" />
           </div>
-        </>
+        </div>
       ) : (
         <div className="card text-center py-12">
           <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
