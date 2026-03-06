@@ -1,18 +1,17 @@
-<<<<<<< HEAD
 # Personal Finance Tracker
 
 A modern web application to track your finances, manage transactions, set savings goals, and view visual reports.
 
 ## Features
 
-- 🔐 **Authentication** - Secure login with Firebase (Email/Password & Google OAuth)
-- 📊 **Dashboard** - Overview of balance, income, expenses, and savings
-- 💰 **Transactions** - Add, edit, delete, and filter transactions
-- 🏷️ **Categories** - Manage custom income and expense categories
-- 🎯 **Goals** - Set and track savings goals with progress visualization
-- 📈 **Reports** - Visual charts and insights with export options (CSV/PDF)
-- ⚡ **Performance** - Optimized for speed with code splitting and lazy loading
-- ♿ **Accessibility** - ARIA labels, keyboard navigation, and high contrast
+- **Authentication** - Secure login with Firebase (Email/Password & Google OAuth)
+- **Dashboard** - Overview of balance, income, expenses, and savings
+- **Transactions** - Add, edit, delete, and filter transactions
+- **Categories** - Manage custom income and expense categories
+- **Goals** - Set and track savings goals with progress visualization
+- **Reports** - Visual charts and insights with export options (CSV/PDF)
+- **Performance** - Optimized for speed with code splitting and lazy loading
+- **Accessibility** - ARIA labels, keyboard navigation, and high contrast
 
 ## Tech Stack
 
@@ -96,6 +95,3 @@ firebase deploy
 ## License
 
 MIT
-=======
-# Finance-Tracker
->>>>>>> 70b78d5193a65fc12d3843919d0e6d73e34bd2c2
