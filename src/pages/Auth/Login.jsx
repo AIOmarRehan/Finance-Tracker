@@ -20,8 +20,6 @@ export default function Login() {
   const navigate = useNavigate();
   const signupMessage = location.state?.signupSuccess ? location.state?.verificationMessage : null;
 
-  console.log('Login component state:', { verificationRequired, error, loading });
-
   async function handleSubmit(e) {
     e.preventDefault();
 
@@ -39,13 +37,8 @@ export default function Login() {
       await login(email, password);
       navigate('/app/dashboard');
     } catch (error) {
-      console.log('Login error caught:', error);
-      console.log('Error message:', error?.message);
-      console.log('Error type:', typeof error);
-      
       // Check for email verification error
       if (error?.message === 'EMAIL_NOT_VERIFIED' || error?.message?.includes('EMAIL_NOT_VERIFIED')) {
-        console.log('Setting verificationRequired to true');
         setVerificationRequired(true);
         setError('');
         setShowResend(true);
@@ -53,7 +46,6 @@ export default function Login() {
         setVerificationRequired(false);
         setError('Failed to login. Please check your credentials.');
       }
-      console.error('Full error:', error);
     } finally {
       setLoading(false);
     }

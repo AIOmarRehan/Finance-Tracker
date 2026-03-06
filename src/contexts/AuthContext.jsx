@@ -90,7 +90,13 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
+      // Don't set currentUser for unverified email/password users
+      // This prevents PublicRoute from redirecting before verification alert shows
+      if (user && !user.emailVerified && user.providerData.some(p => p.providerId === 'password')) {
+        setCurrentUser(null);
+      } else {
+        setCurrentUser(user);
+      }
       setLoading(false);
     });
 
