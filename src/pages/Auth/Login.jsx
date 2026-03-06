@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { signInWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { auth } from '../../config/firebase';
@@ -15,7 +15,9 @@ export default function Login() {
   const [showResend, setShowResend] = useState(false);
   const [captchaValue, setCaptchaValue] = useState(null);
   const { login, signInWithGoogle } = useAuth();
+  const location = useLocation();
   const navigate = useNavigate();
+  const signupMessage = location.state?.signupSuccess ? location.state?.verificationMessage : null;
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -35,7 +37,7 @@ export default function Login() {
       setShowResend(false);
       setLoading(true);
       await login(email, password);
-      navigate('/dashboard');
+      navigate('/app/dashboard');
     } catch (error) {
       if (error.message === 'EMAIL_NOT_VERIFIED') {
         setError('Please verify your email before logging in. Check your inbox for the verification link.');
@@ -68,7 +70,7 @@ export default function Login() {
       setError('');
       setLoading(true);
       await signInWithGoogle();
-      navigate('/dashboard');
+      navigate('/app/dashboard');
     } catch (error) {
       setError('Failed to sign in with Google.');
       console.error(error);
@@ -114,6 +116,14 @@ export default function Login() {
                 Resend Verification Email
               </button>
             )}
+          </div>
+        )}
+
+        {/* Signup Success Alert */}
+        {signupMessage && (
+          <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg" role="alert">
+            <p className="text-sm font-semibold">Account Created Successfully</p>
+            <p className="text-sm">{signupMessage}</p>
           </div>
         )}
 

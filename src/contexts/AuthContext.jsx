@@ -43,9 +43,11 @@ export function AuthProvider({ children }) {
   // Login with email and password
   function login(email, password) {
     return signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
+      .then(async (userCredential) => {
         // Check if email is verified
         if (!userCredential.user.emailVerified) {
+          // Sign out immediately so unverified users cannot pass route guards
+          await signOut(auth);
           throw new Error('EMAIL_NOT_VERIFIED');
         }
         return userCredential;

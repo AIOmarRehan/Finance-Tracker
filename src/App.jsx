@@ -35,7 +35,7 @@ function PublicRoute({ children }) {
     return <Loading />;
   }
   
-  return !currentUser ? children : <Navigate to="/dashboard" />;
+  return !currentUser ? children : <Navigate to="/app/dashboard" />;
 }
 
 function App() {

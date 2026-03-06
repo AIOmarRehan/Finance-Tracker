@@ -14,7 +14,6 @@ export default function Signup() {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
   const [captchaValue, setCaptchaValue] = useState(null);
   const { signup, signInWithGoogle, logout } = useAuth();
   const navigate = useNavigate();
@@ -51,9 +50,14 @@ export default function Signup() {
       setError('');
       setLoading(true);
       await signup(formData.email, formData.password, formData.name);
-      setSuccess(true);
       // Logout the user after signup so they must verify email first
       await logout();
+      navigate('/login', {
+        state: {
+          signupSuccess: true,
+          verificationMessage: 'Account created successfully. Please check your email (including Spam/Junk) and click the verification link before logging in.'
+        }
+      });
     } catch (error) {
       if (error.code === 'auth/email-already-in-use') {
         setError('Email already in use');
@@ -104,14 +108,6 @@ export default function Signup() {
           <h1 className="mt-4 text-3xl font-bold text-gray-900">Create Account</h1>
           <p className="mt-2 text-sm text-gray-600">Start tracking your finances today</p>
         </div>
-
-        {/* Success Alert */}
-        {success && (
-          <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg" role="alert">
-            <p className="text-sm font-semibold">Account Created Successfully!</p>
-            <p className="text-sm">Please check your email to verify your account before logging in.</p>
-          </div>
-        )}
 
         {/* Error Alert */}
         {error && (
