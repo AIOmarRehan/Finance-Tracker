@@ -40,7 +40,7 @@ export default function Login() {
       navigate('/app/dashboard');
     } catch (error) {
       if (error.message === 'EMAIL_NOT_VERIFIED') {
-        setError('Please verify your email before logging in. Check your inbox for the verification link.');
+        setError('You must verify your email first.');
         setShowResend(true);
       } else {
         setError('Failed to login. Please check your credentials.');
