@@ -25,13 +25,18 @@ export async function getTransactions(userId) {
 }
 
 export async function addTransaction(userId, transaction) {
-  const transactionData = {
-    ...transaction,
-    userId,
-    date: transaction.date instanceof Date ? Timestamp.fromDate(transaction.date) : Timestamp.now(),
-    createdAt: Timestamp.now()
-  };
-  return await addDoc(collection(db, 'transactions'), transactionData);
+  try {
+    const transactionData = {
+      ...transaction,
+      userId,
+      date: transaction.date instanceof Date ? Timestamp.fromDate(transaction.date) : Timestamp.now(),
+      createdAt: Timestamp.now()
+    };
+    return await addDoc(collection(db, 'transactions'), transactionData);
+  } catch (error) {
+    console.error('Error in addTransaction:', error);
+    throw error;
+  }
 }
 
 export async function updateTransaction(transactionId, updates) {
@@ -58,12 +63,17 @@ export async function getCategories(userId) {
 }
 
 export async function addCategory(userId, category) {
-  const categoryData = {
-    ...category,
-    userId,
-    createdAt: Timestamp.now()
-  };
-  return await addDoc(collection(db, 'categories'), categoryData);
+  try {
+    const categoryData = {
+      ...category,
+      userId,
+      createdAt: Timestamp.now()
+    };
+    return await addDoc(collection(db, 'categories'), categoryData);
+  } catch (error) {
+    console.error('Error in addCategory:', error);
+    throw error;
+  }
 }
 
 export async function updateCategory(categoryId, updates) {
@@ -87,14 +97,19 @@ export async function getGoals(userId) {
 }
 
 export async function addGoal(userId, goal) {
-  const goalData = {
-    ...goal,
-    userId,
-    currentAmount: 0,
-    targetDate: goal.targetDate instanceof Date ? Timestamp.fromDate(goal.targetDate) : null,
-    createdAt: Timestamp.now()
-  };
-  return await addDoc(collection(db, 'goals'), goalData);
+  try {
+    const goalData = {
+      ...goal,
+      userId,
+      currentAmount: 0,
+      targetDate: goal.targetDate instanceof Date ? Timestamp.fromDate(goal.targetDate) : null,
+      createdAt: Timestamp.now()
+    };
+    return await addDoc(collection(db, 'goals'), goalData);
+  } catch (error) {
+    console.error('Error in addGoal:', error);
+    throw error;
+  }
 }
 
 export async function updateGoal(goalId, updates) {

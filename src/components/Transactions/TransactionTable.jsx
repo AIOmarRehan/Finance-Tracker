@@ -1,6 +1,13 @@
 import { formatCurrency, formatDate } from '../../utils/helpers';
 
-export default function TransactionTable({ transactions, onEdit, onDelete }) {
+export default function TransactionTable({
+  transactions,
+  onEdit,
+  onDelete,
+  selectionMode = false,
+  selectedIds = [],
+  onToggleSelect
+}) {
   if (transactions.length === 0) {
     return (
       <div className="text-center py-12">
@@ -18,6 +25,11 @@ export default function TransactionTable({ transactions, onEdit, onDelete }) {
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
+            {selectionMode && (
+              <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Select
+              </th>
+            )}
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Date
             </th>
@@ -41,6 +53,17 @@ export default function TransactionTable({ transactions, onEdit, onDelete }) {
         <tbody className="bg-white divide-y divide-gray-200">
           {transactions.map((transaction) => (
             <tr key={transaction.id} className="hover:bg-gray-50">
+              {selectionMode && (
+                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.includes(transaction.id)}
+                    onChange={() => onToggleSelect?.(transaction.id)}
+                    aria-label={`Select ${transaction.description}`}
+                    className="h-4 w-4"
+                  />
+                </td>
+              )}
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                 {formatDate(transaction.date)}
               </td>
@@ -76,6 +99,7 @@ export default function TransactionTable({ transactions, onEdit, onDelete }) {
                   onClick={() => onEdit(transaction)}
                   className="text-primary-600 hover:text-primary-900 mr-4"
                   aria-label="Edit transaction"
+                  disabled={selectionMode}
                 >
                   Edit
                 </button>
@@ -83,6 +107,7 @@ export default function TransactionTable({ transactions, onEdit, onDelete }) {
                   onClick={() => onDelete(transaction.id)}
                   className="text-red-600 hover:text-red-900"
                   aria-label="Delete transaction"
+                  disabled={selectionMode}
                 >
                   Delete
                 </button>

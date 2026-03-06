@@ -14,7 +14,7 @@ export default function RecentTransactions({ transactions }) {
           </svg>
           <p className="mt-2 text-gray-500">No transactions yet</p>
           <button
-            onClick={() => navigate('/transactions')}
+            onClick={() => navigate('/app/transactions')}
             className="mt-4 btn-primary"
           >
             Add Your First Transaction

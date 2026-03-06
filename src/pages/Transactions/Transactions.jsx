@@ -5,6 +5,7 @@ import { formatCurrency, formatDate, exportToCSV, downloadFile } from '../../uti
 import TransactionForm from '../../components/Transactions/TransactionForm';
 import TransactionTable from '../../components/Transactions/TransactionTable';
 import TransactionFilters from '../../components/Transactions/TransactionFilters';
+import './Transactions.css'; // Import CSS for modal styling
 
 export default function Transactions() {
   const { currentUser } = useAuth();
@@ -21,6 +22,9 @@ export default function Transactions() {
     dateFrom: '',
     dateTo: ''
   });
+  const [itemToDelete, setItemToDelete] = useState(null);
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedTransactionIds, setSelectedTransactionIds] = useState([]);
 
   useEffect(() => {
     fetchData();
@@ -113,15 +117,42 @@ export default function Transactions() {
   }
 
   async function handleDeleteTransaction(transactionId) {
-    if (!confirm('Are you sure you want to delete this transaction?')) return;
-    
     try {
       await deleteTransaction(transactionId);
       await fetchData();
+      setItemToDelete(null); // Reset the confirmation state
     } catch (error) {
       console.error('Error deleting transaction:', error);
       alert('Failed to delete transaction');
     }
+  }
+
+  async function handleDeleteSelectedTransactions(transactionIds) {
+    if (!transactionIds.length) return;
+
+    try {
+      await Promise.all(transactionIds.map((transactionId) => deleteTransaction(transactionId)));
+      await fetchData();
+      setSelectedTransactionIds([]);
+      setSelectionMode(false);
+      setItemToDelete(null);
+    } catch (error) {
+      console.error('Error deleting selected transactions:', error);
+      alert('Failed to delete selected transactions');
+    }
+  }
+
+  function confirmDeleteTransaction(transactionId) {
+    setItemToDelete({ mode: 'single', id: transactionId, sectionName: 'Transaction' });
+  }
+
+  function confirmDeleteSelectedTransactions() {
+    if (!selectedTransactionIds.length) return;
+    setItemToDelete({ mode: 'bulk', ids: selectedTransactionIds, sectionName: 'Selected Transactions' });
+  }
+
+  function cancelDelete() {
+    setItemToDelete(null);
   }
 
   function handleEdit(transaction) {
@@ -137,6 +168,23 @@ export default function Transactions() {
   function handleExport() {
     const csv = exportToCSV(filteredTransactions);
     downloadFile(csv, `transactions_${new Date().toISOString().split('T')[0]}.csv`);
+  }
+
+  function handleToggleSelectionMode() {
+    setSelectionMode((prev) => !prev);
+    setSelectedTransactionIds([]);
+  }
+
+  function handleSelectAllTransactions() {
+    setSelectedTransactionIds(filteredTransactions.map((transaction) => transaction.id));
+  }
+
+  function handleToggleTransactionSelection(transactionId) {
+    setSelectedTransactionIds((prev) =>
+      prev.includes(transactionId)
+        ? prev.filter((id) => id !== transactionId)
+        : [...prev, transactionId]
+    );
   }
 
   if (loading) {
@@ -156,6 +204,23 @@ export default function Transactions() {
           <p className="text-gray-600 mt-1">Manage your income and expenses</p>
         </div>
         <div className="flex space-x-3">
+          <button onClick={handleToggleSelectionMode} className="btn-secondary">
+            {selectionMode ? 'Cancel Select' : 'Select'}
+          </button>
+          {selectionMode && (
+            <>
+              <button onClick={handleSelectAllTransactions} className="btn-secondary">
+                Select All
+              </button>
+              <button
+                onClick={confirmDeleteSelectedTransactions}
+                className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+                disabled={selectedTransactionIds.length === 0}
+              >
+                Delete Selected
+              </button>
+            </>
+          )}
           <button
             onClick={handleExport}
             className="btn-secondary"
@@ -197,9 +262,38 @@ export default function Transactions() {
         <TransactionTable
           transactions={filteredTransactions}
           onEdit={handleEdit}
-          onDelete={handleDeleteTransaction}
+          onDelete={confirmDeleteTransaction}
+          selectionMode={selectionMode}
+          selectedIds={selectedTransactionIds}
+          onToggleSelect={handleToggleTransactionSelection}
         />
       </div>
+
+      {itemToDelete && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <p className="text-gray-900 mb-4">Are you sure you want to delete {itemToDelete.sectionName}?</p>
+            <div className="flex justify-center gap-3">
+              <button
+                onClick={() =>
+                  itemToDelete.mode === 'bulk'
+                    ? handleDeleteSelectedTransactions(itemToDelete.ids)
+                    : handleDeleteTransaction(itemToDelete.id)
+                }
+                className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700"
+              >
+                Yes
+              </button>
+              <button
+                onClick={cancelDelete}
+                className="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50"
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

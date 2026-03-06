@@ -3,6 +3,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { getGoals, addGoal, updateGoal, deleteGoal } from '../../utils/firestore';
 import GoalForm from '../../components/Goals/GoalForm';
 import GoalCard from '../../components/Goals/GoalCard';
+import './Goals.css'; // Import CSS for modal styling
 
 export default function Goals() {
   const { currentUser } = useAuth();
@@ -10,6 +11,9 @@ export default function Goals() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingGoal, setEditingGoal] = useState(null);
+  const [itemToDelete, setItemToDelete] = useState(null);
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedGoalIds, setSelectedGoalIds] = useState([]);
 
   useEffect(() => {
     fetchGoals();
@@ -53,15 +57,42 @@ export default function Goals() {
   }
 
   async function handleDeleteGoal(goalId) {
-    if (!confirm('Are you sure you want to delete this goal?')) return;
-    
     try {
       await deleteGoal(goalId);
       await fetchGoals();
+      setItemToDelete(null); // Reset the confirmation state
     } catch (error) {
       console.error('Error deleting goal:', error);
       alert('Failed to delete goal');
     }
+  }
+
+  async function handleDeleteSelectedGoals(goalIds) {
+    if (!goalIds.length) return;
+
+    try {
+      await Promise.all(goalIds.map((goalId) => deleteGoal(goalId)));
+      await fetchGoals();
+      setSelectedGoalIds([]);
+      setSelectionMode(false);
+      setItemToDelete(null);
+    } catch (error) {
+      console.error('Error deleting selected goals:', error);
+      alert('Failed to delete selected goals');
+    }
+  }
+
+  function confirmDeleteGoal(goalId) {
+    setItemToDelete({ mode: 'single', id: goalId, sectionName: 'Goal' });
+  }
+
+  function confirmDeleteSelectedGoals() {
+    if (!selectedGoalIds.length) return;
+    setItemToDelete({ mode: 'bulk', ids: selectedGoalIds, sectionName: 'Selected Goals' });
+  }
+
+  function cancelDelete() {
+    setItemToDelete(null);
   }
 
   function handleEdit(goal) {
@@ -72,6 +103,21 @@ export default function Goals() {
   function handleCloseForm() {
     setShowForm(false);
     setEditingGoal(null);
+  }
+
+  function handleToggleSelectionMode() {
+    setSelectionMode((prev) => !prev);
+    setSelectedGoalIds([]);
+  }
+
+  function handleSelectAllGoals() {
+    setSelectedGoalIds(goals.map((goal) => goal.id));
+  }
+
+  function handleToggleGoalSelection(goalId) {
+    setSelectedGoalIds((prev) =>
+      prev.includes(goalId) ? prev.filter((id) => id !== goalId) : [...prev, goalId]
+    );
   }
 
   if (loading) {
@@ -90,9 +136,28 @@ export default function Goals() {
           <h1 className="text-3xl font-bold text-gray-900">Savings Goals</h1>
           <p className="text-gray-600 mt-1">Track your financial goals</p>
         </div>
-        <button onClick={() => setShowForm(true)} className="btn-primary">
-          Add Goal
-        </button>
+        <div className="flex space-x-3">
+          <button onClick={handleToggleSelectionMode} className="btn-secondary">
+            {selectionMode ? 'Cancel Select' : 'Select'}
+          </button>
+          {selectionMode && (
+            <>
+              <button onClick={handleSelectAllGoals} className="btn-secondary">
+                Select All
+              </button>
+              <button
+                onClick={confirmDeleteSelectedGoals}
+                className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+                disabled={selectedGoalIds.length === 0}
+              >
+                Delete Selected
+              </button>
+            </>
+          )}
+          <button onClick={() => setShowForm(true)} className="btn-primary">
+            Add Goal
+          </button>
+        </div>
       </div>
 
       {/* Goal Form Modal */}
@@ -124,10 +189,39 @@ export default function Goals() {
                 key={goal.id}
                 goal={goal}
                 onEdit={handleEdit}
-                onDelete={handleDeleteGoal}
+                onDelete={confirmDeleteGoal}
                 onUpdate={handleUpdateGoal}
+                selectionMode={selectionMode}
+                isSelected={selectedGoalIds.includes(goal.id)}
+                onToggleSelect={handleToggleGoalSelection}
               />
             ))}
+          </div>
+        </div>
+      )}
+
+      {itemToDelete && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <p className="text-gray-900 mb-4">Are you sure you want to delete {itemToDelete.sectionName}?</p>
+            <div className="flex justify-center gap-3">
+              <button
+                onClick={() =>
+                  itemToDelete.mode === 'bulk'
+                    ? handleDeleteSelectedGoals(itemToDelete.ids)
+                    : handleDeleteGoal(itemToDelete.id)
+                }
+                className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700"
+              >
+                Yes
+              </button>
+              <button
+                onClick={cancelDelete}
+                className="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50"
+              >
+                No
+              </button>
+            </div>
           </div>
         </div>
       )}

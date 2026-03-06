@@ -11,6 +11,7 @@ import Goals from './pages/Goals/Goals';
 import Reports from './pages/Reports/Reports';
 import Profile from './pages/Profile/Profile';
 import Loading from './components/Common/Loading';
+import Home from './pages/Home/Home';
 
 // Protected Route wrapper
 function ProtectedRoute({ children }) {
@@ -40,6 +41,7 @@ function App() {
       <Router>
         <Routes>
           {/* Public routes */}
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={
             <PublicRoute>
               <Login />
@@ -52,12 +54,12 @@ function App() {
           } />
           
           {/* Protected routes */}
-          <Route path="/" element={
+          <Route path="/app" element={
             <ProtectedRoute>
               <Layout />
             </ProtectedRoute>
           }>
-            <Route index element={<Navigate to="/dashboard" replace />} />
+            <Route index element={<Navigate to="/app/dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="transactions" element={<Transactions />} />
             <Route path="categories" element={<Categories />} />
@@ -67,7 +69,7 @@ function App() {
           </Route>
           
           {/* Catch all */}
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
     </AuthProvider>

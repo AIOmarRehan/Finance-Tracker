@@ -4,6 +4,7 @@ import { getCategories, addCategory, updateCategory, deleteCategory } from '../.
 import { getDefaultCategories } from '../../utils/helpers';
 import CategoryForm from '../../components/Categories/CategoryForm';
 import CategoryList from '../../components/Categories/CategoryList';
+import './Categories.css'; // Import CSS for modal styling
 
 export default function Categories() {
   const { currentUser } = useAuth();
@@ -11,6 +12,10 @@ export default function Categories() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
+  const [itemToDelete, setItemToDelete] = useState(null);
+  const [setupDefaultsMessage, setSetupDefaultsMessage] = useState(null);
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
 
   useEffect(() => {
     fetchCategories();
@@ -54,15 +59,42 @@ export default function Categories() {
   }
 
   async function handleDeleteCategory(categoryId) {
-    if (!confirm('Are you sure? This category will be removed from all transactions.')) return;
-    
     try {
       await deleteCategory(categoryId);
       await fetchCategories();
+      setItemToDelete(null); // Reset the confirmation state
     } catch (error) {
       console.error('Error deleting category:', error);
       alert('Failed to delete category');
     }
+  }
+
+  async function handleDeleteSelectedCategories(categoryIds) {
+    if (!categoryIds.length) return;
+
+    try {
+      await Promise.all(categoryIds.map((categoryId) => deleteCategory(categoryId)));
+      await fetchCategories();
+      setSelectedCategoryIds([]);
+      setSelectionMode(false);
+      setItemToDelete(null);
+    } catch (error) {
+      console.error('Error deleting selected categories:', error);
+      alert('Failed to delete selected categories');
+    }
+  }
+
+  function confirmDeleteCategory(categoryId) {
+    setItemToDelete({ mode: 'single', id: categoryId, sectionName: 'Category' });
+  }
+
+  function confirmDeleteSelectedCategories() {
+    if (!selectedCategoryIds.length) return;
+    setItemToDelete({ mode: 'bulk', ids: selectedCategoryIds, sectionName: 'Selected Categories' });
+  }
+
+  function cancelDelete() {
+    setItemToDelete(null);
   }
 
   async function handleSetupDefaults() {
@@ -72,10 +104,16 @@ export default function Categories() {
         await addCategory(currentUser.uid, category);
       }
       await fetchCategories();
-      alert('Default categories added successfully!');
+      setSetupDefaultsMessage({
+        type: 'success',
+        text: 'Default categories added successfully!'
+      });
     } catch (error) {
       console.error('Error setting up defaults:', error);
-      alert('Failed to set up default categories');
+      setSetupDefaultsMessage({
+        type: 'error',
+        text: 'Failed to set up default categories'
+      });
     }
   }
 
@@ -89,6 +127,23 @@ export default function Categories() {
     setEditingCategory(null);
   }
 
+  function handleToggleSelectionMode() {
+    setSelectionMode((prev) => !prev);
+    setSelectedCategoryIds([]);
+  }
+
+  function handleSelectAllCategories() {
+    setSelectedCategoryIds(categories.map((category) => category.id));
+  }
+
+  function handleToggleCategorySelection(categoryId) {
+    setSelectedCategoryIds((prev) =>
+      prev.includes(categoryId)
+        ? prev.filter((id) => id !== categoryId)
+        : [...prev, categoryId]
+    );
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -99,6 +154,20 @@ export default function Categories() {
 
   return (
     <div className="space-y-6">
+      {setupDefaultsMessage && (
+        <div
+          className={`rounded-lg px-4 py-3 border ${
+            setupDefaultsMessage.type === 'success'
+              ? 'bg-green-50 border-green-200 text-green-800'
+              : 'bg-red-50 border-red-200 text-red-800'
+          }`}
+          role="status"
+          aria-live="polite"
+        >
+          {setupDefaultsMessage.text}
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
@@ -106,6 +175,23 @@ export default function Categories() {
           <p className="text-gray-600 mt-1">Organize your income and expenses</p>
         </div>
         <div className="flex space-x-3">
+          <button onClick={handleToggleSelectionMode} className="btn-secondary">
+            {selectionMode ? 'Cancel Select' : 'Select'}
+          </button>
+          {selectionMode && (
+            <>
+              <button onClick={handleSelectAllCategories} className="btn-secondary">
+                Select All
+              </button>
+              <button
+                onClick={confirmDeleteSelectedCategories}
+                className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+                disabled={selectedCategoryIds.length === 0}
+              >
+                Delete Selected
+              </button>
+            </>
+          )}
           {categories.length === 0 && (
             <button onClick={handleSetupDefaults} className="btn-secondary">
               Setup Defaults
@@ -133,8 +219,37 @@ export default function Categories() {
       <CategoryList
         categories={categories}
         onEdit={handleEdit}
-        onDelete={handleDeleteCategory}
+        onDelete={confirmDeleteCategory}
+        selectionMode={selectionMode}
+        selectedIds={selectedCategoryIds}
+        onToggleSelect={handleToggleCategorySelection}
       />
+
+      {itemToDelete && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <p className="text-gray-900 mb-4">Are you sure you want to delete {itemToDelete.sectionName}?</p>
+            <div className="flex justify-center gap-3">
+              <button
+                onClick={() =>
+                  itemToDelete.mode === 'bulk'
+                    ? handleDeleteSelectedCategories(itemToDelete.ids)
+                    : handleDeleteCategory(itemToDelete.id)
+                }
+                className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700"
+              >
+                Yes
+              </button>
+              <button
+                onClick={cancelDelete}
+                className="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50"
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

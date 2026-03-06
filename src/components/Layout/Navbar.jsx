@@ -1,5 +1,6 @@
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export default function Navbar({ onMenuClick }) {
   const { currentUser, logout } = useAuth();
@@ -8,7 +9,7 @@ export default function Navbar({ onMenuClick }) {
   const handleLogout = async () => {
     try {
       await logout();
-      navigate('/login');
+      navigate('/'); // Redirect to Home page after logout
     } catch (error) {
       console.error('Failed to logout:', error);
     }
@@ -40,17 +41,35 @@ export default function Navbar({ onMenuClick }) {
 
           {/* User Menu */}
           <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-600 hidden sm:block">
-              {currentUser?.displayName || currentUser?.email}
-            </span>
-            
-            <button
-              onClick={handleLogout}
-              className="btn-secondary text-sm"
-              aria-label="Logout"
-            >
-              Logout
-            </button>
+            {currentUser ? (
+              <>
+                <span className="text-sm text-gray-600 hidden sm:block">
+                  {currentUser?.displayName || currentUser?.email}
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="btn-secondary text-sm"
+                  aria-label="Logout"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => navigate('/login')}
+                  className="btn-primary"
+                >
+                  Log In
+                </button>
+                <button
+                  onClick={() => navigate('/signup')}
+                  className="btn-secondary ml-4"
+                >
+                  Sign Up
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>
