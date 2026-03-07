@@ -5,6 +5,7 @@ import { useAuth } from './contexts/AuthContext';
 import Layout from './components/Layout/Layout';
 import Login from './pages/Auth/Login';
 import Signup from './pages/Auth/Signup';
+import ForgotPassword from './pages/Auth/ForgotPassword';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Transactions from './pages/Transactions/Transactions';
 import Categories from './pages/Categories/Categories';
@@ -12,6 +13,7 @@ import Goals from './pages/Goals/Goals';
 import Reports from './pages/Reports/Reports';
 import Profile from './pages/Profile/Profile';
 import Loading from './components/Common/Loading';
+import ScrollToTop from './components/Common/ScrollToTop';
 import Home from './pages/Home/Home';
 import PrivacyPolicy from './pages/Legal/PrivacyPolicy';
 import TermsOfService from './pages/Legal/TermsOfService';
@@ -44,6 +46,7 @@ function App() {
     <ThemeProvider>
       <AuthProvider>
         <Router>
+          <ScrollToTop />
           <Routes>
             {/* Public routes */}
             <Route path="/" element={<Home />} />
@@ -55,6 +58,11 @@ function App() {
             <Route path="/signup" element={
               <PublicRoute>
                 <Signup />
+              </PublicRoute>
+            } />
+            <Route path="/forgot-password" element={
+              <PublicRoute>
+                <ForgotPassword />
               </PublicRoute>
             } />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />

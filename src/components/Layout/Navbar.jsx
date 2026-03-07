@@ -19,6 +19,15 @@ export default function Navbar({ onMenuClick }) {
     }
   };
 
+  const handleLogoClick = (e) => {
+    // If already on home page, scroll to top
+    if (location.pathname === '/') {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    // Otherwise, let the Link component handle navigation
+  };
+
   return (
     <nav className="bg-white dark:bg-gray-800 shadow-md dark:shadow-gray-900/30 fixed w-full top-0 z-50 border-b border-transparent dark:border-gray-700" role="navigation" aria-label="Main navigation">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -38,7 +47,7 @@ export default function Navbar({ onMenuClick }) {
               </button>
             )}
             
-            <Link to="/" className="flex items-center hover:opacity-80 transition-opacity">
+            <Link to="/" onClick={handleLogoClick} className="flex items-center hover:opacity-80 transition-opacity">
               <img src="/web-icon/svgviewer-output.svg" alt="SpendMetra" className="h-20 w-20" />
               <span className="ml-2 text-xl font-bold text-gray-800 dark:text-white hidden sm:inline">SpendMetra</span>
             </Link>

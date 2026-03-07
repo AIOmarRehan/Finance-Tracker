@@ -10,9 +10,14 @@ import {
   updateProfile,
   updatePassword,
   updateEmail,
-  sendEmailVerification
+  sendEmailVerification,
+  deleteUser,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
+  sendPasswordResetEmail
 } from 'firebase/auth';
 import { auth } from '../config/firebase';
+import { deleteAllUserData } from '../utils/firestore';
 
 const AuthContext = createContext();
 
@@ -100,6 +105,28 @@ export function AuthProvider({ children }) {
     return updatePassword(currentUser, password);
   }
 
+  // Send password reset email
+  function resetPassword(email) {
+    return sendPasswordResetEmail(auth, email);
+  }
+
+  // Delete account with reauthentication
+  async function deleteAccount(email, password) {
+    if (!currentUser) {
+      throw new Error('No user logged in');
+    }
+
+    // Reauthenticate user before deletion
+    const credential = EmailAuthProvider.credential(email, password);
+    await reauthenticateWithCredential(currentUser, credential);
+
+    // Delete all user data from Firestore
+    await deleteAllUserData(currentUser.uid);
+
+    // Delete the user account
+    await deleteUser(currentUser);
+  }
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -132,7 +159,9 @@ export function AuthProvider({ children }) {
     updateUserProfile,
     updateUserEmail,
     updateUserPassword,
-    resendVerificationEmail
+    resendVerificationEmail,
+    resetPassword,
+    deleteAccount
   };
 
   return (

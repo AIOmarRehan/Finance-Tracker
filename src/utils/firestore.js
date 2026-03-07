@@ -391,3 +391,38 @@ export async function updateGoal(goalId, updates) {
 export async function deleteGoal(goalId) {
   return await deleteDoc(doc(db, 'goals', goalId));
 }
+
+// Delete all user data (for account deletion)
+export async function deleteAllUserData(userId) {
+  try {
+    // Delete all transactions
+    const transactionsQuery = query(
+      collection(db, 'transactions'),
+      where('userId', '==', userId)
+    );
+    const transactionsSnapshot = await getDocs(transactionsQuery);
+    const transactionDeletes = transactionsSnapshot.docs.map(doc => deleteDoc(doc.ref));
+
+    // Delete all categories
+    const categoriesQuery = query(
+      collection(db, 'categories'),
+      where('userId', '==', userId)
+    );
+    const categoriesSnapshot = await getDocs(categoriesQuery);
+    const categoryDeletes = categoriesSnapshot.docs.map(doc => deleteDoc(doc.ref));
+
+    // Delete all goals
+    const goalsQuery = query(
+      collection(db, 'goals'),
+      where('userId', '==', userId)
+    );
+    const goalsSnapshot = await getDocs(goalsQuery);
+    const goalDeletes = goalsSnapshot.docs.map(doc => deleteDoc(doc.ref));
+
+    // Execute all deletes in parallel
+    await Promise.all([...transactionDeletes, ...categoryDeletes, ...goalDeletes]);
+  } catch (error) {
+    console.error('Error deleting user data:', error);
+    throw error;
+  }
+}

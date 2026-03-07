@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { sendEmailVerification } from 'firebase/auth';
 
 export default function Profile() {
-  const { currentUser, updateUserProfile, updateUserEmail, updateUserPassword, logout } = useAuth();
+  const { currentUser, updateUserProfile, updateUserEmail, updateUserPassword, logout, deleteAccount } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('profile');
   const [loading, setLoading] = useState(false);
@@ -24,6 +25,13 @@ export default function Profile() {
     newPassword: '',
     confirmPassword: ''
   });
+
+  // Delete account form
+  const [deleteData, setDeleteData] = useState({
+    email: '',
+    password: ''
+  });
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   async function handleUpdateProfile(e) {
     e.preventDefault();
@@ -50,7 +58,9 @@ export default function Profile() {
       setMessage({ type: '', text: '' });
       
       await updateUserEmail(emailData.email);
-      setMessage({ type: 'success', text: 'Email updated successfully!' });
+      // Send verification email to new email address
+      await sendEmailVerification(currentUser);
+      setMessage({ type: 'success', text: 'Email updated successfully! Verification email sent.' });
     } catch (error) {
       console.error(error);
       if (error.code === 'auth/requires-recent-login') {
@@ -93,6 +103,35 @@ export default function Profile() {
     }
   }
 
+  async function handleDeleteAccount(e) {
+    e.preventDefault();
+    
+    if (deleteData.email !== currentUser?.email) {
+      return setMessage({ type: 'error', text: 'Email does not match your account email' });
+    }
+
+    try {
+      setLoading(true);
+      setMessage({ type: '', text: '' });
+      
+      await deleteAccount(deleteData.email, deleteData.password);
+      // User will be automatically logged out after account deletion
+      navigate('/');
+    } catch (error) {
+      console.error(error);
+      if (error.code === 'auth/wrong-password') {
+        setMessage({ type: 'error', text: 'Incorrect password' });
+      } else if (error.code === 'auth/invalid-credential') {
+        setMessage({ type: 'error', text: 'Invalid credentials. Please check your password.' });
+      } else {
+        setMessage({ type: 'error', text: 'Failed to delete account: ' + error.message });
+      }
+    } finally {
+      setLoading(false);
+      setShowDeleteModal(false);
+    }
+  }
+
   return (
     <div className="max-w-4xl">
       {/* Home Link */}
@@ -110,7 +149,9 @@ export default function Profile() {
       {/* Message Alert */}
       {message.text && (
         <div className={`mb-6 p-4 rounded-lg ${
-          message.type === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'
+          message.type === 'success' 
+            ? 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-700' 
+            : 'bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-700'
         }`}>
           {message.text}
         </div>
@@ -120,7 +161,7 @@ export default function Profile() {
       <div className="card">
         <div className="border-b border-gray-200 dark:border-gray-700 mb-6">
           <nav className="-mb-px flex space-x-8">
-            {['profile', 'email', 'password'].map((tab) => (
+            {['profile', 'email', 'password', 'delete'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => {
@@ -131,9 +172,9 @@ export default function Profile() {
                   activeTab === tab
                     ? 'border-primary-600 text-primary-600 dark:text-primary-400 dark:border-primary-400'
                     : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
-                }`}
+                } ${tab === 'delete' ? (activeTab === tab ? '' : 'text-red-600 dark:text-red-400') : ''}`}
               >
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                {tab === 'delete' ? 'Delete Account' : tab.charAt(0).toUpperCase() + tab.slice(1)}
               </button>
             ))}
           </nav>
@@ -222,7 +263,7 @@ export default function Profile() {
 
             <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-4">
               <p className="text-sm text-yellow-800 dark:text-yellow-300">
-                You may need to log in again after changing your email
+                You may need to log in again after changing your email. A verification email will be sent to your new address.
               </p>
             </div>
 
@@ -284,8 +325,95 @@ export default function Profile() {
             </button>
           </form>
         )}
+
+        {/* Delete Account Tab */}
+        {activeTab === 'delete' && (
+          <div className="space-y-6">
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-red-800 dark:text-red-300 mb-2">Danger Zone</h3>
+              <p className="text-sm text-red-700 dark:text-red-400">
+                Deleting your account is permanent and cannot be undone. All your data including transactions, categories, and goals will be permanently deleted.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowDeleteModal(true)}
+              className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg transition-colors"
+            >
+              Delete My Account
+            </button>
+          </div>
+        )}
         </div>
       </div>
+
+      {/* Delete Account Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Confirm Account Deletion</h2>
+            
+            <form onSubmit={handleDeleteAccount} className="space-y-4">
+              <div>
+                <label htmlFor="deleteEmail" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  id="deleteEmail"
+                  required
+                  value={deleteData.email}
+                  onChange={(e) => setDeleteData(prev => ({ ...prev, email: e.target.value }))}
+                  className="input-field"
+                  placeholder={currentUser?.email}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="deletePassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  id="deletePassword"
+                  required
+                  value={deleteData.password}
+                  onChange={(e) => setDeleteData(prev => ({ ...prev, password: e.target.value }))}
+                  className="input-field"
+                  placeholder="••••••••"
+                />
+              </div>
+
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-3">
+                <p className="text-sm text-red-800 dark:text-red-300 font-semibold">
+                  This action cannot be undone!
+                </p>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    setDeleteData({ email: '', password: '' });
+                  }}
+                  className="flex-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-semibold px-4 py-2 rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? 'Deleting...' : 'Delete Account'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
