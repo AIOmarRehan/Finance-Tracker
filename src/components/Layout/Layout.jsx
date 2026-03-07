@@ -14,7 +14,7 @@ export default function Layout() {
       {/* Spacer for fixed navbar */}
       <div className="h-16"></div>
       
-      <div className="flex flex-1 items-start">
+      <div className="flex flex-1">
         <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         
         <main className="flex-1 p-4 md:p-6 lg:p-8">
