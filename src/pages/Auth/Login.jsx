@@ -5,6 +5,28 @@ import { signInWithEmailAndPassword, sendEmailVerification, signOut } from 'fire
 import { auth } from '../../config/firebase';
 import ReCAPTCHA from 'react-google-recaptcha';
 
+function getGoogleAuthErrorMessage(error) {
+  const code = error?.code;
+
+  if (code === 'auth/unauthorized-domain') {
+    return 'Google sign-in is not enabled for this domain. Add your Vercel domain in Firebase Auth Authorized domains.';
+  }
+  if (code === 'auth/operation-not-allowed') {
+    return 'Google sign-in is disabled in Firebase. Enable Google provider in Authentication > Sign-in method.';
+  }
+  if (code === 'auth/popup-blocked') {
+    return 'Popup was blocked by the browser. Allow popups and try again.';
+  }
+  if (code === 'auth/popup-closed-by-user') {
+    return 'Google sign-in popup was closed before completing sign-in.';
+  }
+  if (code === 'auth/network-request-failed') {
+    return 'Network error during Google sign-in. Please check your connection and try again.';
+  }
+
+  return `Failed to sign in with Google${code ? ` (${code})` : ''}.`;
+}
+
 export default function Login() {
   const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
   const isRecaptchaConfigured = Boolean(recaptchaSiteKey);
@@ -87,10 +109,11 @@ export default function Login() {
       await signInWithGoogle();
       navigate('/app/dashboard');
     } catch (error) {
-      setError('Failed to sign in with Google.');
-      console.error(error);
+      setError(getGoogleAuthErrorMessage(error));
+      console.error('Google sign-in failed:', error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   function onCaptchaChange(value) {

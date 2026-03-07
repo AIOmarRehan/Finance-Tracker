@@ -6,6 +6,7 @@ import {
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithRedirect,
   updateProfile,
   updatePassword,
   updateEmail,
@@ -73,7 +74,15 @@ export function AuthProvider({ children }) {
   // Google sign in
   function signInWithGoogle() {
     const provider = new GoogleAuthProvider();
-    return signInWithPopup(auth, provider);
+    provider.setCustomParameters({ prompt: 'select_account' });
+
+    return signInWithPopup(auth, provider).catch((error) => {
+      // Fallback to redirect flow when popup is blocked by browser settings.
+      if (error?.code === 'auth/popup-blocked') {
+        return signInWithRedirect(auth, provider);
+      }
+      throw error;
+    });
   }
 
   // Update user profile
