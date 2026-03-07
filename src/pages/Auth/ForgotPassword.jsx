@@ -67,11 +67,11 @@ export default function ForgotPassword() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-800 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         {/* Logo */}
         <div className="flex flex-col items-center">
-          <img src="/icons/favicon-512x512.png" alt="SpendMetra" className="h-24 w-24 mb-4" />
+          <img src="/favicon/favicon-512x512.png" alt="SpendMetra" className="h-24 w-24 mb-4" />
           <h2 className="text-center text-3xl font-extrabold text-gray-900 dark:text-white">
             Reset Your Password
           </h2>
