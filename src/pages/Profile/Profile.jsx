@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { sendEmailVerification } from 'firebase/auth';
 
 export default function Profile() {
   const { currentUser, updateUserProfile, updateUserEmail, updateUserPassword, logout, deleteAccount } = useAuth();
@@ -65,9 +64,7 @@ export default function Profile() {
       }
       
       await updateUserEmail(emailData.email);
-      // Send verification email to new email address
-      await sendEmailVerification(currentUser);
-      setMessage({ type: 'success', text: 'Email updated successfully! Verification email sent.' });
+      setMessage({ type: 'success', text: 'A verification email has been sent to your new address. Please verify it to complete the change.' });
       setEmailData({ email: currentUser?.email || '' });
     } catch (error) {
       console.error('Email update error:', error);
@@ -77,6 +74,8 @@ export default function Profile() {
         setMessage({ type: 'error', text: 'This email is already in use by another account' });
       } else if (error.code === 'auth/invalid-email') {
         setMessage({ type: 'error', text: 'Invalid email address' });
+      } else if (error.code === 'auth/operation-not-allowed') {
+        setMessage({ type: 'error', text: 'Email change is not allowed. Please log out and log in again, then try.' });
       } else if (error.message && error.message.includes('too-many-requests')) {
         setMessage({ type: 'error', text: 'Too many requests. Please try again later.' });
       } else {
@@ -147,7 +146,7 @@ export default function Profile() {
   }
 
   return (
-    <div className="max-w-4xl">
+    <div className="w-full max-w-4xl overflow-hidden">
       {/* Home Link */}
       <Link to="/" className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 font-semibold mb-6">
         <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -156,8 +155,8 @@ export default function Profile() {
         Back to Home
       </Link>
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Profile Settings</h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-1">Manage your account settings</p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Profile Settings</h1>
+        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-1">Manage your account settings</p>
       </div>
 
       {/* Message Alert */}
@@ -172,9 +171,9 @@ export default function Profile() {
       )}
 
       {/* Tabs */}
-      <div className="card">
-        <div className="border-b border-gray-200 dark:border-gray-700 mb-6 overflow-x-auto">
-          <nav className="-mb-px flex space-x-4 sm:space-x-8 whitespace-nowrap">
+      <div className="card overflow-hidden">
+        <div className="border-b border-gray-200 dark:border-gray-700 mb-6">
+          <nav className="-mb-px flex">
             {['profile', 'email', 'password', 'delete'].map((tab) => (
               <button
                 key={tab}
@@ -182,13 +181,14 @@ export default function Profile() {
                   setActiveTab(tab);
                   setMessage({ type: '', text: '' });
                 }}
-                className={`pb-4 px-2 sm:px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors ${
+                className={`flex-1 pb-3 pt-1 border-b-2 font-medium text-xs sm:text-sm transition-colors text-center ${
                   activeTab === tab
                     ? 'border-primary-600 text-primary-600 dark:text-primary-400 dark:border-primary-400'
                     : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
                 } ${tab === 'delete' ? (activeTab === tab ? '' : 'text-red-600 dark:text-red-400') : ''}`}
               >
-                {tab === 'delete' ? 'Delete Account' : tab.charAt(0).toUpperCase() + tab.slice(1)}
+                {tab === 'delete' ? (<span className="hidden sm:inline">Delete Account</span>) : tab.charAt(0).toUpperCase() + tab.slice(1)}
+                {tab === 'delete' && <span className="sm:hidden">Delete</span>}
               </button>
             ))}
           </nav>
@@ -275,7 +275,7 @@ export default function Profile() {
 
             <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-4">
               <p className="text-sm text-yellow-800 dark:text-yellow-300">
-                You may need to log in again after changing your email. A verification email will be sent to your new address.
+                A verification email will be sent to your new address. Your email will only change after you verify the new address.
               </p>
             </div>
 
@@ -291,9 +291,9 @@ export default function Profile() {
 
         {/* Password Tab */}
         {activeTab === 'password' && (
-          <form onSubmit={handleUpdatePassword} className="space-y-6">
+          <form onSubmit={handleUpdatePassword} className="space-y-4 sm:space-y-6">
             <div>
-              <label htmlFor="newPassword" className="block text-sm4 sm:space-y- font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 New Password
               </label>
               <input
@@ -340,9 +340,9 @@ export default function Profile() {
 
         {/* Delete Account Tab */}
         {activeTab === 'delete' && (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-4">
-              <h3 className="text-4 sm:space-y-lg font-semibold text-red-800 dark:text-red-300 mb-2">Danger Zone</h3>
+              <h3 className="text-lg font-semibold text-red-800 dark:text-red-300 mb-2">Danger Zone</h3>
               <p className="text-sm text-red-700 dark:text-red-400">
                 Deleting your account is permanent and cannot be undone. All your data including transactions, categories, and goals will be permanently deleted.
               </p>
@@ -351,9 +351,9 @@ export default function Profile() {
             <button
               type="button"
               onClick={() => setShowDeleteModal(true)}
-              className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg transition-colors"
+              className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold px-3 sm:px-4 py-2 rounded-lg transition-colors text-sm sm:text-base"
             >
-              Delete My Account3 sm:px-4 py-2 rounded-lg transition-colors text-sm sm:text-base
+              Delete My Account
             </button>
           </div>
         )}

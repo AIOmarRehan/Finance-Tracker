@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
 import { fetchSignInMethodsForEmail } from 'firebase/auth';
+import { useAuth } from '../../contexts/AuthContext';
 import { auth } from '../../config/firebase';
 
 export default function ForgotPassword() {
@@ -10,54 +10,66 @@ export default function ForgotPassword() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
-  // Check if email is a Google account
-  async function checkIfGoogleAccount(emailAddress) {
-    try {
-      const methods = await fetchSignInMethodsForEmail(auth, emailAddress);
-      return methods.includes('google.com');
-    } catch (error) {
-      return false;
-    }
-  }
-
   async function handleSubmit(e) {
     e.preventDefault();
 
     try {
       setLoading(true);
       setMessage({ type: '', text: '' });
-      
-      // Check if account exists
+
+      // Try fetchSignInMethodsForEmail first.
+      // If Email Enumeration Protection is OFF this returns the real providers.
+      // If it is ON the array is always empty and we fall through gracefully.
       const methods = await fetchSignInMethodsForEmail(auth, email);
-      
-      if (methods.length === 0) {
-        setMessage({ type: 'error', text: 'No account found with this email address.' });
-        setLoading(false);
-        return;
-      }
-      
-      // Check if it's a Google account
-      if (methods.includes('google.com')) {
-        setMessage({ 
-          type: 'success', 
-          text: 'This is a Google account. You have to log in directly with Google.' 
+
+      if (methods.length > 0) {
+        // --- Enumeration protection is OFF, we have reliable data ---
+
+        // Google-only account (signed up via Google, never set a password)
+        if (methods.includes('google.com') && !methods.includes('password')) {
+          setMessage({
+            type: 'success',
+            text: 'This is a Google account. You can sign in directly with Google.'
+          });
+          setEmail('');
+          return;
+        }
+
+        // Account has a password provider - send reset link
+        await resetPassword(email);
+        setMessage({
+          type: 'success',
+          text: 'Password reset email sent! Check your inbox for instructions.'
         });
         setEmail('');
-        setLoading(false);
         return;
       }
-      
-      // Send password reset email
-      await resetPassword(email);
-      setMessage({ 
-        type: 'success', 
-        text: 'Password reset email sent! Check your inbox for instructions.' 
-      });
-      setEmail('');
+
+      // --- methods is empty ---
+      // Either the account does not exist, or Email Enumeration Protection is ON.
+      // Attempt to send the reset email. With protection ON the call succeeds
+      // even for non-existent addresses (by design). With protection OFF
+      // Firebase throws auth/user-not-found for missing accounts.
+      try {
+        await resetPassword(email);
+        setMessage({
+          type: 'success',
+          text: 'If an account exists with this email, a password reset link has been sent. Check your inbox.'
+        });
+        setEmail('');
+      } catch (resetErr) {
+        if (resetErr?.code === 'auth/user-not-found') {
+          setMessage({ type: 'error', text: 'No account found with this email address.' });
+        } else {
+          throw resetErr;
+        }
+      }
     } catch (error) {
       console.error(error);
       if (error.code === 'auth/invalid-email') {
-        setMessage({ type: 'error', text: 'Invalid email address' });
+        setMessage({ type: 'error', text: 'Invalid email address.' });
+      } else if (error.code === 'auth/too-many-requests') {
+        setMessage({ type: 'error', text: 'Too many attempts. Please wait a few minutes and try again.' });
       } else {
         setMessage({ type: 'error', text: 'Failed to send reset email. Please try again.' });
       }

@@ -9,7 +9,7 @@ import {
   signInWithRedirect,
   updateProfile,
   updatePassword,
-  updateEmail,
+  verifyBeforeUpdateEmail,
   sendEmailVerification,
   deleteUser,
   reauthenticateWithCredential,
@@ -95,9 +95,9 @@ export function AuthProvider({ children }) {
     return updateProfile(currentUser, { displayName });
   }
 
-  // Update user email
+  // Update user email (sends verification to new email first)
   function updateUserEmail(email) {
-    return updateEmail(currentUser, email);
+    return verifyBeforeUpdateEmail(currentUser, email);
   }
 
   // Update user password
