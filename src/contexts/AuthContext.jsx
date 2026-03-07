@@ -14,10 +14,12 @@ import {
   deleteUser,
   reauthenticateWithCredential,
   EmailAuthProvider,
-  sendPasswordResetEmail
+  sendPasswordResetEmail,
+  updatePassword,
+  linkWithCredential
 } from 'firebase/auth';
 import { auth } from '../config/firebase';
-import { deleteAllUserData } from '../utils/firestore';
+import { deleteAllUserData, saveUserRecord } from '../utils/firestore';
 
 const AuthContext = createContext();
 
@@ -40,6 +42,8 @@ export function AuthProvider({ children }) {
         if (displayName) {
           await updateProfile(userCredential.user, { displayName });
         }
+        // Save user record to Firestore
+        await saveUserRecord(userCredential.user.uid, email, 'password');
         // Send email verification
         await sendEmailVerification(userCredential.user);
         return userCredential;
@@ -81,13 +85,19 @@ export function AuthProvider({ children }) {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
 
-    return signInWithPopup(auth, provider).catch((error) => {
-      // Fallback to redirect flow when popup is blocked by browser settings.
-      if (error?.code === 'auth/popup-blocked') {
-        return signInWithRedirect(auth, provider);
-      }
-      throw error;
-    });
+    return signInWithPopup(auth, provider)
+      .then(async (result) => {
+        // Save user record to Firestore on Google sign-in
+        await saveUserRecord(result.user.uid, result.user.email, 'google.com');
+        return result;
+      })
+      .catch((error) => {
+        // Fallback to redirect flow when popup is blocked by browser settings.
+        if (error?.code === 'auth/popup-blocked') {
+          return signInWithRedirect(auth, provider);
+        }
+        throw error;
+      });
   }
 
   // Update user profile
@@ -96,7 +106,20 @@ export function AuthProvider({ children }) {
   }
 
   // Update user email (sends verification to new email first)
-  function updateUserEmail(email) {
+  // For Google-only users, pass a password to link the email/password provider
+  async function updateUserEmail(email, password) {
+    if (password) {
+      // Link email/password provider by creating a credential and linking it
+      const credential = EmailAuthProvider.credential(currentUser.email, password);
+      try {
+        await linkWithCredential(currentUser, credential);
+      } catch (err) {
+        // If already linked, ignore - the password provider already exists
+        if (err.code !== 'auth/provider-already-linked') {
+          throw err;
+        }
+      }
+    }
     return verifyBeforeUpdateEmail(currentUser, email);
   }
 

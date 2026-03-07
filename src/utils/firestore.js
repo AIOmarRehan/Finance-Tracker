@@ -5,6 +5,7 @@ import {
   deleteDoc, 
   deleteField,
   getDoc,
+  setDoc,
   doc, 
   query, 
   where, 
@@ -85,6 +86,26 @@ async function migrateLegacyGoal(userId, goalRef, current) {
     targetDate: deleteField(),
     description: deleteField()
   });
+}
+
+// ============ USERS ============
+
+export async function saveUserRecord(uid, email, provider) {
+  return setDoc(doc(db, 'users', uid), {
+    email: email.toLowerCase(),
+    provider,
+    updatedAt: Timestamp.now()
+  }, { merge: true });
+}
+
+export async function getUserByEmail(email) {
+  const q = query(
+    collection(db, 'users'),
+    where('email', '==', email.toLowerCase())
+  );
+  const snapshot = await getDocs(q);
+  if (snapshot.empty) return null;
+  return { id: snapshot.docs[0].id, ...snapshot.docs[0].data() };
 }
 
 // ============ TRANSACTIONS ============
@@ -419,8 +440,13 @@ export async function deleteAllUserData(userId) {
     const goalsSnapshot = await getDocs(goalsQuery);
     const goalDeletes = goalsSnapshot.docs.map(doc => deleteDoc(doc.ref));
 
+    // Delete user record
+    const userDocRef = doc(db, 'users', userId);
+    const userDocSnap = await getDoc(userDocRef);
+    const userDelete = userDocSnap.exists() ? [deleteDoc(userDocRef)] : [];
+
     // Execute all deletes in parallel
-    await Promise.all([...transactionDeletes, ...categoryDeletes, ...goalDeletes]);
+    await Promise.all([...transactionDeletes, ...categoryDeletes, ...goalDeletes, ...userDelete]);
   } catch (error) {
     console.error('Error deleting user data:', error);
     throw error;

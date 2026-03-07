@@ -9,6 +9,10 @@ export default function Profile() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
+  // Check if user is Google-only (no password provider linked)
+  const isGoogleUser = currentUser?.providerData?.some(p => p.providerId === 'google.com') &&
+    !currentUser?.providerData?.some(p => p.providerId === 'password');
+
   // Profile form
   const [profileData, setProfileData] = useState({
     displayName: currentUser?.displayName || ''
@@ -16,7 +20,8 @@ export default function Profile() {
 
   // Email form
   const [emailData, setEmailData] = useState({
-    email: currentUser?.email || ''
+    email: currentUser?.email || '',
+    password: ''
   });
 
   // Password form
@@ -62,10 +67,17 @@ export default function Profile() {
         setLoading(false);
         return;
       }
+
+      // For Google-only users, require a password to link email/password provider
+      if (isGoogleUser && (!emailData.password || emailData.password.length < 6)) {
+        setMessage({ type: 'error', text: 'Please set a password (at least 6 characters) for your new email sign-in' });
+        setLoading(false);
+        return;
+      }
       
-      await updateUserEmail(emailData.email);
+      await updateUserEmail(emailData.email, isGoogleUser ? emailData.password : undefined);
       setMessage({ type: 'success', text: 'A verification email has been sent to your new address. Please verify it to complete the change.' });
-      setEmailData({ email: currentUser?.email || '' });
+      setEmailData({ email: currentUser?.email || '', password: '' });
     } catch (error) {
       console.error('Email update error:', error);
       if (error.code === 'auth/requires-recent-login') {
@@ -273,11 +285,39 @@ export default function Profile() {
               />
             </div>
 
+            {isGoogleUser && (
+              <div>
+                <label htmlFor="newEmailPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Set a Password for New Email
+                </label>
+                <input
+                  type="password"
+                  id="newEmailPassword"
+                  required
+                  value={emailData.password}
+                  onChange={(e) => setEmailData(prev => ({ ...prev, password: e.target.value }))}
+                  className="input-field"
+                  placeholder="••••••••"
+                />
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  This password will be used to sign in with your new email address
+                </p>
+              </div>
+            )}
+
             <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-4">
               <p className="text-sm text-yellow-800 dark:text-yellow-300">
                 A verification email will be sent to your new address. Your email will only change after you verify the new address.
               </p>
             </div>
+
+            {currentUser?.providerData?.some(p => p.providerId === 'google.com') && (
+              <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-4">
+                <p className="text-sm text-yellow-800 dark:text-yellow-300">
+                  If your account was created using Google Sign-In and you change your email address, you can still sign in using your Google account as usual.
+                </p>
+              </div>
+            )}
 
             <button
               type="submit"

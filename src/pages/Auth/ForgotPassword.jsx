@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchSignInMethodsForEmail } from 'firebase/auth';
 import { useAuth } from '../../contexts/AuthContext';
-import { auth } from '../../config/firebase';
+import { getUserByEmail } from '../../utils/firestore';
 
 export default function ForgotPassword() {
   const { resetPassword } = useAuth();
@@ -17,53 +16,36 @@ export default function ForgotPassword() {
       setLoading(true);
       setMessage({ type: '', text: '' });
 
-      // Try fetchSignInMethodsForEmail first.
-      // If Email Enumeration Protection is OFF this returns the real providers.
-      // If it is ON the array is always empty and we fall through gracefully.
-      const methods = await fetchSignInMethodsForEmail(auth, email);
+      // Step 1: Check if email exists in the database
+      const userRecord = await getUserByEmail(email);
 
-      if (methods.length > 0) {
-        // --- Enumeration protection is OFF, we have reliable data ---
+      if (!userRecord) {
+        // Email does not exist in the system
+        setMessage({
+          type: 'error',
+          text: 'No account is associated with this email address.'
+        });
+        return;
+      }
 
-        // Google-only account (signed up via Google, never set a password)
-        if (methods.includes('google.com') && !methods.includes('password')) {
-          setMessage({
-            type: 'success',
-            text: 'This is a Google account. You can sign in directly with Google.'
-          });
-          setEmail('');
-          return;
-        }
-
-        // Account has a password provider - send reset link
-        await resetPassword(email);
+      // Step 2: Check the authentication provider
+      if (userRecord.provider === 'google.com') {
+        // Google OAuth account
         setMessage({
           type: 'success',
-          text: 'Password reset email sent! Check your inbox for instructions.'
+          text: 'This account was created using Google Sign-In. Please sign in directly using your Google account.'
         });
         setEmail('');
         return;
       }
 
-      // --- methods is empty ---
-      // Either the account does not exist, or Email Enumeration Protection is ON.
-      // Attempt to send the reset email. With protection ON the call succeeds
-      // even for non-existent addresses (by design). With protection OFF
-      // Firebase throws auth/user-not-found for missing accounts.
-      try {
-        await resetPassword(email);
-        setMessage({
-          type: 'success',
-          text: 'If an account exists with this email, a password reset link has been sent. Check your inbox.'
-        });
-        setEmail('');
-      } catch (resetErr) {
-        if (resetErr?.code === 'auth/user-not-found') {
-          setMessage({ type: 'error', text: 'No account found with this email address.' });
-        } else {
-          throw resetErr;
-        }
-      }
+      // Step 3: Standard email/password account - send reset link
+      await resetPassword(email);
+      setMessage({
+        type: 'success',
+        text: 'A password reset link has been sent to your email address.'
+      });
+      setEmail('');
     } catch (error) {
       console.error(error);
       if (error.code === 'auth/invalid-email') {
