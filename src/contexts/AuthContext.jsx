@@ -13,6 +13,7 @@ import {
   sendEmailVerification,
   deleteUser,
   reauthenticateWithCredential,
+  reauthenticateWithPopup,
   EmailAuthProvider,
   sendPasswordResetEmail,
   linkWithCredential
@@ -132,7 +133,7 @@ export function AuthProvider({ children }) {
     return sendPasswordResetEmail(auth, email);
   }
 
-  // Delete account with reauthentication
+  // Delete account with email/password reauthentication
   async function deleteAccount(email, password) {
     if (!currentUser) {
       throw new Error('No user logged in');
@@ -141,6 +142,23 @@ export function AuthProvider({ children }) {
     // Reauthenticate user before deletion
     const credential = EmailAuthProvider.credential(email, password);
     await reauthenticateWithCredential(currentUser, credential);
+
+    // Delete all user data from Firestore
+    await deleteAllUserData(currentUser.uid);
+
+    // Delete the user account
+    await deleteUser(currentUser);
+  }
+
+  // Delete account with Google reauthentication
+  async function deleteAccountWithGoogle() {
+    if (!currentUser) {
+      throw new Error('No user logged in');
+    }
+
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+    await reauthenticateWithPopup(currentUser, provider);
 
     // Delete all user data from Firestore
     await deleteAllUserData(currentUser.uid);
@@ -183,7 +201,8 @@ export function AuthProvider({ children }) {
     updateUserPassword,
     resendVerificationEmail,
     resetPassword,
-    deleteAccount
+    deleteAccount,
+    deleteAccountWithGoogle
   };
 
   return (
