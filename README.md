@@ -1,6 +1,6 @@
-# FinanceTracker
+# SpendMetra
 
-FinanceTracker is a modern web application designed to help users manage their personal finances effectively. With features like transaction tracking, goal setting, and detailed reports, FinanceTracker provides a comprehensive solution for financial management.
+SpendMetra is a modern web application designed to help users manage their personal finances effectively. With features like transaction tracking, goal setting, and detailed reports, SpendMetra provides a comprehensive solution for financial management.
 
 ---
 
