@@ -203,21 +203,21 @@ export default function Goals() {
       {itemToDelete && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <p className="text-gray-900 mb-4">Are you sure you want to delete {itemToDelete.sectionName}?</p>
-            <div className="flex justify-center gap-3">
+            <p className="text-gray-900 dark:text-white mb-4">Are you sure you want to delete {itemToDelete.sectionName}?</p>
+            <div className="flex flex-wrap justify-center gap-3">
               <button
                 onClick={() =>
                   itemToDelete.mode === 'bulk'
                     ? handleDeleteSelectedGoals(itemToDelete.ids)
                     : handleDeleteGoal(itemToDelete.id)
                 }
-                className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700"
+                className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 transition-colors"
               >
                 Yes
               </button>
               <button
                 onClick={cancelDelete}
-                className="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50"
+                className="px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
                 No
               </button>
