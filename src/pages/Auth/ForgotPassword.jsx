@@ -1,12 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { fetchSignInMethodsForEmail } from 'firebase/auth';
+import { auth } from '../../config/firebase';
 
 export default function ForgotPassword() {
   const { resetPassword } = useAuth();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+
+  // Check if email is a Google account
+  async function checkIfGoogleAccount(emailAddress) {
+    try {
+      const methods = await fetchSignInMethodsForEmail(auth, emailAddress);
+      return methods.includes('google.com');
+    } catch (error) {
+      return false;
+    }
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -15,6 +27,27 @@ export default function ForgotPassword() {
       setLoading(true);
       setMessage({ type: '', text: '' });
       
+      // Check if account exists
+      const methods = await fetchSignInMethodsForEmail(auth, email);
+      
+      if (methods.length === 0) {
+        setMessage({ type: 'error', text: 'No account found with this email address.' });
+        setLoading(false);
+        return;
+      }
+      
+      // Check if it's a Google account
+      if (methods.includes('google.com')) {
+        setMessage({ 
+          type: 'success', 
+          text: 'This is a Google account. You have to log in directly with Google.' 
+        });
+        setEmail('');
+        setLoading(false);
+        return;
+      }
+      
+      // Send password reset email
       await resetPassword(email);
       setMessage({ 
         type: 'success', 
@@ -23,9 +56,7 @@ export default function ForgotPassword() {
       setEmail('');
     } catch (error) {
       console.error(error);
-      if (error.code === 'auth/user-not-found') {
-        setMessage({ type: 'error', text: 'No account found with this email' });
-      } else if (error.code === 'auth/invalid-email') {
+      if (error.code === 'auth/invalid-email') {
         setMessage({ type: 'error', text: 'Invalid email address' });
       } else {
         setMessage({ type: 'error', text: 'Failed to send reset email. Please try again.' });
@@ -40,7 +71,7 @@ export default function ForgotPassword() {
       <div className="max-w-md w-full space-y-8">
         {/* Logo */}
         <div className="flex flex-col items-center">
-          <img src="/web-icon/svgviewer-output.svg" alt="SpendMetra" className="h-24 w-24 mb-4" />
+          <img src="/icons/favicon-512x512.png" alt="SpendMetra" className="h-24 w-24 mb-4" />
           <h2 className="text-center text-3xl font-extrabold text-gray-900 dark:text-white">
             Reset Your Password
           </h2>

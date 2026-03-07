@@ -57,16 +57,30 @@ export default function Profile() {
       setLoading(true);
       setMessage({ type: '', text: '' });
       
+      // Validate email is different
+      if (emailData.email === currentUser?.email) {
+        setMessage({ type: 'error', text: 'New email must be different from current email' });
+        setLoading(false);
+        return;
+      }
+      
       await updateUserEmail(emailData.email);
       // Send verification email to new email address
       await sendEmailVerification(currentUser);
       setMessage({ type: 'success', text: 'Email updated successfully! Verification email sent.' });
+      setEmailData({ email: currentUser?.email || '' });
     } catch (error) {
-      console.error(error);
+      console.error('Email update error:', error);
       if (error.code === 'auth/requires-recent-login') {
         setMessage({ type: 'error', text: 'Please log out and log in again to change your email' });
+      } else if (error.code === 'auth/email-already-in-use') {
+        setMessage({ type: 'error', text: 'This email is already in use by another account' });
+      } else if (error.code === 'auth/invalid-email') {
+        setMessage({ type: 'error', text: 'Invalid email address' });
+      } else if (error.message && error.message.includes('too-many-requests')) {
+        setMessage({ type: 'error', text: 'Too many requests. Please try again later.' });
       } else {
-        setMessage({ type: 'error', text: 'Failed to update email' });
+        setMessage({ type: 'error', text: error.message || 'Failed to update email' });
       }
     } finally {
       setLoading(false);
@@ -159,8 +173,8 @@ export default function Profile() {
 
       {/* Tabs */}
       <div className="card">
-        <div className="border-b border-gray-200 dark:border-gray-700 mb-6">
-          <nav className="-mb-px flex space-x-8">
+        <div className="border-b border-gray-200 dark:border-gray-700 mb-6 overflow-x-auto">
+          <nav className="-mb-px flex space-x-4 sm:space-x-8 whitespace-nowrap">
             {['profile', 'email', 'password', 'delete'].map((tab) => (
               <button
                 key={tab}
@@ -168,7 +182,7 @@ export default function Profile() {
                   setActiveTab(tab);
                   setMessage({ type: '', text: '' });
                 }}
-                className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                className={`pb-4 px-2 sm:px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors ${
                   activeTab === tab
                     ? 'border-primary-600 text-primary-600 dark:text-primary-400 dark:border-primary-400'
                     : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
@@ -180,11 +194,11 @@ export default function Profile() {
           </nav>
         </div>
 
-        <div className="max-h-[60vh] overflow-y-auto p-4">
+        <div className="max-h-[60vh] overflow-y-auto p-3 sm:p-4">
 
         {/* Profile Tab */}
         {activeTab === 'profile' && (
-          <form onSubmit={handleUpdateProfile} className="space-y-6">
+          <form onSubmit={handleUpdateProfile} className="space-y-4 sm:space-y-6">
             <div>
               <label htmlFor="displayName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Display Name
@@ -226,23 +240,21 @@ export default function Profile() {
 
         {/* Email Tab */}
         {activeTab === 'email' && (
-          <form onSubmit={handleUpdateEmail} className="space-y-6">
-            <div className="mt-6 max-h-[60vh] overflow-y-auto">
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white">Account Details</h3>
-              <div className="mt-4 grid grid-cols-1 gap-4">
-                <div className="flex items-center justify-between gap-4">
-                  <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Email</p>
-                    <p className="text-gray-800 dark:text-gray-200">{currentUser?.email}</p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={logout}
-                    className="bg-red-500 text-white px-4 py-1.5 rounded-lg hover:bg-red-600 whitespace-nowrap"
-                  >
-                    Logout
-                  </button>
+          <form onSubmit={handleUpdateEmail} className="space-y-4 sm:space-y-6">
+            <div className="mt-4 sm:mt-6">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Account Details</h3>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 p-3 sm:p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                <div className="flex-1">
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Current Email</p>
+                  <p className="text-sm sm:text-base text-gray-800 dark:text-gray-200 break-all">{currentUser?.email}</p>
                 </div>
+                <button
+                  type="button"
+                  onClick={logout}
+                  className="w-full sm:w-auto bg-red-500 text-white px-3 sm:px-4 py-2 sm:py-1.5 rounded-lg hover:bg-red-600 whitespace-nowrap text-sm"
+                >
+                  Logout
+                </button>
               </div>
             </div>
 
@@ -281,7 +293,7 @@ export default function Profile() {
         {activeTab === 'password' && (
           <form onSubmit={handleUpdatePassword} className="space-y-6">
             <div>
-              <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label htmlFor="newPassword" className="block text-sm4 sm:space-y- font-medium text-gray-700 dark:text-gray-300 mb-1">
                 New Password
               </label>
               <input
@@ -330,7 +342,7 @@ export default function Profile() {
         {activeTab === 'delete' && (
           <div className="space-y-6">
             <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-4">
-              <h3 className="text-lg font-semibold text-red-800 dark:text-red-300 mb-2">Danger Zone</h3>
+              <h3 className="text-4 sm:space-y-lg font-semibold text-red-800 dark:text-red-300 mb-2">Danger Zone</h3>
               <p className="text-sm text-red-700 dark:text-red-400">
                 Deleting your account is permanent and cannot be undone. All your data including transactions, categories, and goals will be permanently deleted.
               </p>
@@ -341,7 +353,7 @@ export default function Profile() {
               onClick={() => setShowDeleteModal(true)}
               className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg transition-colors"
             >
-              Delete My Account
+              Delete My Account3 sm:px-4 py-2 rounded-lg transition-colors text-sm sm:text-base
             </button>
           </div>
         )}
@@ -351,10 +363,10 @@ export default function Profile() {
       {/* Delete Account Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Confirm Account Deletion</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 max-w-md w-full">
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-4">Confirm Account Deletion</h2>
             
-            <form onSubmit={handleDeleteAccount} className="space-y-4">
+            <form onSubmit={handleDeleteAccount} className="space-y-3 sm:space-y-4">
               <div>
                 <label htmlFor="deleteEmail" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Email Address
@@ -391,21 +403,21 @@ export default function Profile() {
                 </p>
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   type="button"
                   onClick={() => {
                     setShowDeleteModal(false);
                     setDeleteData({ email: '', password: '' });
                   }}
-                  className="flex-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-semibold px-4 py-2 rounded-lg transition-colors"
+                  className="order-2 sm:order-1 flex-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-semibold px-3 sm:px-4 py-2 rounded-lg transition-colors text-sm"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="order-1 sm:order-2 flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold px-3 sm:px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                 >
                   {loading ? 'Deleting...' : 'Delete Account'}
                 </button>
