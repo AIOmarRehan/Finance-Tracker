@@ -48,7 +48,7 @@ const Footer = () => {
 
         {/* Divider */}
         <div className="border-t border-gray-800 dark:border-gray-900 pt-6 sm:pt-8 text-center text-sm text-gray-400 dark:text-gray-500">
-          <p>&copy; 2026 SpendMetra. All rights reserved.</p>
+          <p>&copy; 2026 SpendMetra. All rights reserved. Developed and maintained by Omar Rehan.</p>
         </div>
       </div>
     </footer>

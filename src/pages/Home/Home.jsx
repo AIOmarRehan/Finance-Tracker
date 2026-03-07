@@ -19,7 +19,7 @@ const Home = () => {
       <Navbar />
 
       <main className="flex-grow">
-        {/* ===== Hero Section ===== */}
+        {/* Hero Section */}
         <section className="hero-section bg-gradient-to-r from-primary-600 to-primary-700 dark:from-primary-700 dark:to-primary-800 text-white py-16 sm:py-20 px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl sm:text-5xl font-bold mb-4 sm:mb-6">Take Control of Your Money</h1>
@@ -37,7 +37,7 @@ const Home = () => {
           </div>
         </section>
 
-        {/* ===== Features Section ===== */}
+        {/*  Features Section  */}
         <section className="features-section py-12 sm:py-16 px-4 bg-gray-50 dark:bg-gray-800">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-3xl sm:text-4xl font-bold text-center mb-10 sm:mb-12 text-gray-900 dark:text-white">Key Features</h2>
@@ -87,7 +87,7 @@ const Home = () => {
           </div>
         </section>
 
-        {/* ===== How It Works Section ===== */}
+        {/*  How It Works Section  */}
         <section className="how-it-works py-12 sm:py-16 px-4 bg-white dark:bg-gray-900">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl sm:text-4xl font-bold text-center mb-10 sm:mb-12 text-gray-900 dark:text-white">How It Works</h2>
@@ -122,7 +122,7 @@ const Home = () => {
           </div>
         </section>
 
-        {/* ===== Benefits Section ===== */}
+        {/*  Benefits Section  */}
         <section className="benefits-section py-12 sm:py-16 px-4 bg-gray-50 dark:bg-gray-800">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl sm:text-4xl font-bold text-center mb-10 sm:mb-12 text-gray-900 dark:text-white">Why Choose SpendMetra?</h2>
@@ -178,7 +178,7 @@ const Home = () => {
           </div>
         </section>
 
-        {/* ===== Final CTA Section ===== */}
+        {/* Final CTA Section */}
         <section className="cta-section bg-gradient-to-r from-primary-600 to-primary-700 dark:from-primary-700 dark:to-primary-800 text-white py-12 sm:py-16 px-4">
           <div className="max-w-2xl mx-auto text-center">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">Ready to Take Control?</h2>

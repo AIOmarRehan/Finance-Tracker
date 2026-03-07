@@ -1,4 +1,4 @@
-/* ===== Hero Section ===== */
+/*  Hero Section  */
 .hero-section {
   min-height: 600px;
   display: flex;
@@ -18,7 +18,7 @@
   animation: fadeInUp 0.8s ease-out 0.4s both;
 }
 
-/* ===== Button Styles ===== */
+/* Button Styles  */
 .btn-primary-lg {
   display: inline-flex;
   align-items: center;
@@ -53,7 +53,7 @@
   color: #4f46e5;
 }
 
-/* ===== Features Section ===== */
+/*  Features Section  */
 .features-section {
   min-height: 500px;
 }
@@ -73,7 +73,7 @@
   justify-content: center;
 }
 
-/* ===== How It Works Section ===== */
+/*  How It Works Section  */
 .how-it-works {
   min-height: 450px;
 }
@@ -89,7 +89,7 @@
   color: white;
 }
 
-/* ===== Benefits Section ===== */
+/*  Benefits Section  */
 .benefits-section {
   min-height: 450px;
 }
@@ -108,7 +108,7 @@
   border-radius: 50%;
 }
 
-/* ===== CTA Section ===== */
+/*  CTA Section  */
 .cta-section {
   min-height: 300px;
   display: flex;
@@ -116,7 +116,7 @@
   justify-content: center;
 }
 
-/* ===== Animations ===== */
+/*  Animations  */
 @keyframes fadeInDown {
   from {
     opacity: 0;
@@ -139,7 +139,7 @@
   }
 }
 
-/* ===== Responsive Design ===== */
+/*  Responsive Design  */
 @media (max-width: 768px) {
   .hero-section h1 {
     font-size: 2.5rem;
