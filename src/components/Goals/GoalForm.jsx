@@ -36,17 +36,17 @@ export default function GoalForm({ goal, onSubmit, onCancel }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+    <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full">
         <div className="p-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
             {goal ? 'Edit Goal' : 'Add Goal'}
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Name */}
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Goal Name *
               </label>
               <input
@@ -62,11 +62,11 @@ export default function GoalForm({ goal, onSubmit, onCancel }) {
 
             {/* Target Amount */}
             <div>
-              <label htmlFor="targetAmount" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="targetAmount" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Target Amount *
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-2 text-gray-500">$</span>
+                <span className="absolute left-3 top-2 text-gray-500 dark:text-gray-400">$</span>
                 <input
                   type="number"
                   id="targetAmount"
@@ -83,11 +83,11 @@ export default function GoalForm({ goal, onSubmit, onCancel }) {
 
             {/* Current Amount */}
             <div>
-              <label htmlFor="currentAmount" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="currentAmount" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Current Amount
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-2 text-gray-500">$</span>
+                <span className="absolute left-3 top-2 text-gray-500 dark:text-gray-400">$</span>
                 <input
                   type="number"
                   id="currentAmount"
@@ -103,7 +103,7 @@ export default function GoalForm({ goal, onSubmit, onCancel }) {
 
             {/* Target Date */}
             <div>
-              <label htmlFor="targetDate" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="targetDate" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Target Date
               </label>
               <input
@@ -117,7 +117,7 @@ export default function GoalForm({ goal, onSubmit, onCancel }) {
 
             {/* Description */}
             <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Description (optional)
               </label>
               <textarea

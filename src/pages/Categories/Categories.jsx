@@ -147,7 +147,7 @@ export default function Categories() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 dark:border-primary-400"></div>
       </div>
     );
   }
@@ -169,23 +169,23 @@ export default function Categories() {
       )}
 
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Categories</h1>
-          <p className="text-gray-600 mt-1">Organize your income and expenses</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Categories</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">Organize your income and expenses</p>
         </div>
-        <div className="flex space-x-3">
-          <button onClick={handleToggleSelectionMode} className="btn-secondary">
+        <div className="flex flex-wrap gap-2">
+          <button onClick={handleToggleSelectionMode} className="btn-secondary text-sm">
             {selectionMode ? 'Cancel Select' : 'Select'}
           </button>
           {selectionMode && (
             <>
-              <button onClick={handleSelectAllCategories} className="btn-secondary">
+              <button onClick={handleSelectAllCategories} className="btn-secondary text-sm">
                 Select All
               </button>
               <button
                 onClick={confirmDeleteSelectedCategories}
-                className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+                className="px-3 py-2 rounded-md bg-red-600 text-white text-sm hover:bg-red-700 disabled:opacity-50"
                 disabled={selectedCategoryIds.length === 0}
               >
                 Delete Selected
@@ -193,12 +193,15 @@ export default function Categories() {
             </>
           )}
           {categories.length === 0 && (
-            <button onClick={handleSetupDefaults} className="btn-secondary">
+            <button onClick={handleSetupDefaults} className="btn-secondary text-sm">
               Setup Defaults
             </button>
           )}
-          <button onClick={() => setShowForm(true)} className="btn-primary">
-            Add Category
+          <button onClick={() => setShowForm(true)} className="btn-primary flex items-center space-x-2 text-sm">
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+            </svg>
+            <span>Add Category</span>
           </button>
         </div>
       </div>

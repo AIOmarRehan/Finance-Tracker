@@ -49,7 +49,7 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 dark:border-primary-400"></div>
       </div>
     );
   }
@@ -57,11 +57,11 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">
+      <div className="min-w-0">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white break-words">
           Welcome back, {currentUser?.displayName || 'User'}!
         </h1>
-        <p className="text-gray-600 mt-1">Here's your financial overview for this month</p>
+        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-1 break-words">Here's your financial overview for this month</p>
       </div>
 
       {/* Summary Cards */}

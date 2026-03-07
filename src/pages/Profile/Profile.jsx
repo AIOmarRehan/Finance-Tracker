@@ -103,8 +103,8 @@ export default function Profile() {
         Back to Home
       </Link>
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Profile Settings</h1>
-        <p className="text-gray-600 mt-1">Manage your account settings</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Profile Settings</h1>
+        <p className="text-gray-600 dark:text-gray-400 mt-1">Manage your account settings</p>
       </div>
 
       {/* Message Alert */}
@@ -118,7 +118,7 @@ export default function Profile() {
 
       {/* Tabs */}
       <div className="card">
-        <div className="border-b border-gray-200 mb-6">
+        <div className="border-b border-gray-200 dark:border-gray-700 mb-6">
           <nav className="-mb-px flex space-x-8">
             {['profile', 'email', 'password'].map((tab) => (
               <button
@@ -129,8 +129,8 @@ export default function Profile() {
                 }}
                 className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === tab
-                    ? 'border-primary-600 text-primary-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-primary-600 text-primary-600 dark:text-primary-400 dark:border-primary-400'
+                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
                 }`}
               >
                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -145,7 +145,7 @@ export default function Profile() {
         {activeTab === 'profile' && (
           <form onSubmit={handleUpdateProfile} className="space-y-6">
             <div>
-              <label htmlFor="displayName" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="displayName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Display Name
               </label>
               <input
@@ -159,16 +159,16 @@ export default function Profile() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Email (Read-only)
               </label>
               <input
                 type="email"
                 value={currentUser?.email || ''}
                 disabled
-                className="input-field bg-gray-50 cursor-not-allowed"
+                className="input-field bg-gray-50 dark:bg-gray-600 cursor-not-allowed"
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                 To change your email, use the Email tab
               </p>
             </div>
@@ -187,17 +187,17 @@ export default function Profile() {
         {activeTab === 'email' && (
           <form onSubmit={handleUpdateEmail} className="space-y-6">
             <div className="mt-6 max-h-[60vh] overflow-y-auto">
-              <h3 className="text-lg font-medium">Account Details</h3>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white">Account Details</h3>
               <div className="mt-4 grid grid-cols-1 gap-4">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-4">
                   <div>
-                    <p className="text-sm text-gray-500">Email</p>
-                    <p className="text-gray-800">{currentUser?.email}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Email</p>
+                    <p className="text-gray-800 dark:text-gray-200">{currentUser?.email}</p>
                   </div>
                   <button
                     type="button"
                     onClick={logout}
-                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                    className="bg-red-500 text-white px-4 py-1.5 rounded-lg hover:bg-red-600 whitespace-nowrap"
                   >
                     Logout
                   </button>
@@ -206,7 +206,7 @@ export default function Profile() {
             </div>
 
             <div>
-              <label htmlFor="newEmail" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="newEmail" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 New Email
               </label>
               <input
@@ -220,8 +220,8 @@ export default function Profile() {
               />
             </div>
 
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <p className="text-sm text-yellow-800">
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-4">
+              <p className="text-sm text-yellow-800 dark:text-yellow-300">
                 You may need to log in again after changing your email
               </p>
             </div>
@@ -240,7 +240,7 @@ export default function Profile() {
         {activeTab === 'password' && (
           <form onSubmit={handleUpdatePassword} className="space-y-6">
             <div>
-              <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 New Password
               </label>
               <input
@@ -255,7 +255,7 @@ export default function Profile() {
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Confirm Password
               </label>
               <input
@@ -269,8 +269,8 @@ export default function Profile() {
               />
             </div>
 
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <p className="text-sm text-yellow-800">
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-4">
+              <p className="text-sm text-yellow-800 dark:text-yellow-300">
                 You may need to log in again after changing your password
               </p>
             </div>

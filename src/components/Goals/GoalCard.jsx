@@ -48,9 +48,9 @@ export default function GoalCard({
 
       <div className="flex justify-between items-start mb-4">
         <div className="flex-1">
-          <h3 className="text-xl font-bold text-gray-900">{goal.name}</h3>
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white">{goal.name}</h3>
           {goal.description && (
-            <p className="text-sm text-gray-600 mt-1">{goal.description}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{goal.description}</p>
           )}
         </div>
         <div className="flex items-center space-x-2">
@@ -65,7 +65,7 @@ export default function GoalCard({
           )}
           <button
             onClick={() => onEdit(goal)}
-            className="text-primary-600 hover:text-primary-800"
+            className="text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300"
             aria-label="Edit goal"
             disabled={selectionMode}
           >
@@ -75,7 +75,7 @@ export default function GoalCard({
           </button>
           <button
             onClick={() => onDelete(goal.id)}
-            className="text-red-600 hover:text-red-800"
+            className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
             aria-label="Delete goal"
             disabled={selectionMode}
           >
@@ -88,11 +88,11 @@ export default function GoalCard({
 
       {/* Progress Bar */}
       <div className="mb-4">
-        <div className="flex justify-between text-sm text-gray-600 mb-2">
+        <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-2">
           <span>{formatCurrency(goal.currentAmount)}</span>
           <span>{formatCurrency(goal.targetAmount)}</span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 overflow-hidden">
           <div
             className={`h-full transition-all duration-500 ${
               isCompleted ? 'bg-green-500' : 'bg-primary-600'
@@ -104,7 +104,7 @@ export default function GoalCard({
             aria-valuemax="100"
           />
         </div>
-        <p className="text-sm text-gray-600 mt-2 text-center font-medium">
+        <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 text-center font-medium">
           {progress.toFixed(1)}% Complete
         </p>
       </div>
@@ -113,15 +113,15 @@ export default function GoalCard({
       <div className="space-y-2 mb-4">
         {!isCompleted && (
           <div className="flex justify-between text-sm">
-            <span className="text-gray-600">Remaining:</span>
-            <span className="font-semibold text-gray-900">{formatCurrency(remaining)}</span>
+            <span className="text-gray-600 dark:text-gray-400">Remaining:</span>
+            <span className="font-semibold text-gray-900 dark:text-white">{formatCurrency(remaining)}</span>
           </div>
         )}
         {goal.targetDate && (
           <div className="flex justify-between text-sm">
-            <span className="text-gray-600">Target Date:</span>
+            <span className="text-gray-600 dark:text-gray-400">Target Date:</span>
             <span className={`font-semibold ${
-              daysRemaining !== null && daysRemaining < 30 && !isCompleted ? 'text-red-600' : 'text-gray-900'
+              daysRemaining !== null && daysRemaining < 30 && !isCompleted ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-white'
             }`}>
               {formatDate(goal.targetDate)}
               {daysRemaining !== null && !isCompleted && (
@@ -138,7 +138,7 @@ export default function GoalCard({
           {isUpdating ? (
             <div className="space-y-2">
               <div className="relative">
-                <span className="absolute left-3 top-2 text-gray-500">$</span>
+                <span className="absolute left-3 top-2 text-gray-500 dark:text-gray-400">$</span>
                 <input
                   type="number"
                   min="0"

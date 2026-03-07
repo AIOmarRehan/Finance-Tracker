@@ -6,7 +6,7 @@ export default function CategoryBreakdown({ title, data, type }) {
 
   return (
     <div className="card">
-      <h2 className="text-xl font-semibold text-gray-900 mb-4">{title}</h2>
+      <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{title}</h2>
       {sortedData.length > 0 ? (
         <div className="space-y-3">
           {sortedData.map((item, index) => {
@@ -14,14 +14,14 @@ export default function CategoryBreakdown({ title, data, type }) {
             return (
               <div key={index} className="space-y-1">
                 <div className="flex justify-between text-sm">
-                  <span className="font-medium text-gray-700">{item.name}</span>
+                  <span className="font-medium text-gray-700 dark:text-gray-300">{item.name}</span>
                   <span className={`font-semibold ${
-                    type === 'income' ? 'text-green-600' : 'text-red-600'
+                    type === 'income' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
                   }`}>
                     {formatCurrency(item.amount)}
                   </span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                   <div
                     className={`h-full rounded-full transition-all duration-500 ${
                       type === 'income' ? 'bg-green-500' : 'bg-red-500'
@@ -29,24 +29,24 @@ export default function CategoryBreakdown({ title, data, type }) {
                     style={{ width: `${percentage}%` }}
                   />
                 </div>
-                <div className="flex justify-between text-xs text-gray-500">
+                <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
                   <span>{item.count} transaction{item.count !== 1 ? 's' : ''}</span>
                   <span>{percentage.toFixed(1)}%</span>
                 </div>
               </div>
             );
           })}
-          <div className="pt-3 border-t mt-4">
-            <div className="flex justify-between font-bold text-gray-900">
+          <div className="pt-3 border-t dark:border-gray-700 mt-4">
+            <div className="flex justify-between font-bold text-gray-900 dark:text-white">
               <span>Total</span>
-              <span className={type === 'income' ? 'text-green-600' : 'text-red-600'}>
+              <span className={type === 'income' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}>
                 {formatCurrency(total)}
               </span>
             </div>
           </div>
         </div>
       ) : (
-        <p className="text-center text-gray-500 py-8">No {type} data available</p>
+        <p className="text-center text-gray-500 dark:text-gray-400 py-8">No {type} data available</p>
       )}
     </div>
   );

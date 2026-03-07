@@ -127,90 +127,90 @@ const ContactUs = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-white dark:bg-gray-900">
       <Navbar />
 
-      <main className="flex-grow bg-white">
-        <div className="max-w-4xl mx-auto px-4 py-16">
+      <main className="flex-grow">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
           {/* Home Link */}
-          <Link to="/" className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 font-semibold mb-6">
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <Link to="/" className="inline-flex items-center gap-2 text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-semibold mb-6 text-sm sm:text-base">
+            <svg className="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
             Back to Home
           </Link>
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold mb-4 text-gray-900">Get in Touch</h1>
-            <p className="text-xl text-gray-600">
+          <div className="text-center mb-10 sm:mb-12">
+            <h1 className="text-3xl sm:text-4xl font-bold mb-4 text-gray-900 dark:text-white">Get in Touch</h1>
+            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-400">
               Have questions, feedback, or need assistance? We'd love to hear from you. Please feel free to contact us using the form below or reach out directly via email.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-10 sm:mb-12">
             {/* Direct Contact */}
-            <div className="text-center">
+            <div className="text-center bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
               <div className="mb-4">
-                <svg className="h-12 w-12 text-primary-600 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="h-10 w-10 sm:h-12 sm:w-12 text-primary-600 dark:text-primary-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Email Support</h3>
-              <p className="text-gray-600 mb-4">Send us an email and we'll respond as soon as possible</p>
-              <a href="mailto:ai.omar.rehan@gmail.com" className="text-primary-600 hover:text-primary-700 font-semibold">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-2">Email Support</h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-4 text-sm">Send us an email and we'll respond as soon as possible</p>
+              <a href="mailto:ai.omar.rehan@gmail.com" className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-semibold text-sm">
                 ai.omar.rehan@gmail.com
               </a>
             </div>
 
             {/* Response Time */}
-            <div className="text-center">
+            <div className="text-center bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
               <div className="mb-4">
-                <svg className="h-12 w-12 text-primary-600 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="h-10 w-10 sm:h-12 sm:w-12 text-primary-600 dark:text-primary-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Response Time</h3>
-              <p className="text-gray-600">We typically respond to inquiries within 24-48 hours during business days</p>
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-2">Response Time</h3>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">We typically respond to inquiries within 24-48 hours during business days</p>
             </div>
 
             {/* Support */}
-            <div className="text-center">
+            <div className="text-center bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
               <div className="mb-4">
-                <img src="/icons/support.svg" alt="Support" className="h-12 w-12 mx-auto" />
+                <img src="/icons/support.svg" alt="Support" className="h-10 w-10 sm:h-12 sm:w-12 mx-auto" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Support Topics</h3>
-              <p className="text-gray-600">Account issues, feature requests, feedback, and general inquiries</p>
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-2">Support Topics</h3>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">Account issues, feature requests, feedback, and general inquiries</p>
             </div>
           </div>
 
           {/* Contact Form */}
-          <div className="max-w-2xl mx-auto bg-gray-50 rounded-lg p-8">
-            <h2 className="text-2xl font-semibold mb-6 text-gray-900">Send us a Message</h2>
+          <div className="max-w-2xl mx-auto bg-gray-50 dark:bg-gray-800 rounded-lg p-6 sm:p-8">
+            <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-gray-900 dark:text-white">Send us a Message</h2>
 
             {submitted && (
-              <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg mb-6" role="alert">
+              <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-400 px-4 py-3 rounded-lg mb-6" role="alert">
                 <p className="font-semibold">Thank you for your message!</p>
                 <p>We've received your inquiry and will get back to you soon.</p>
               </div>
             )}
 
             {warning && (
-              <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-lg mb-6" role="alert">
+              <div className="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 text-yellow-800 dark:text-yellow-400 px-4 py-3 rounded-lg mb-6" role="alert">
                 <p className="font-semibold">Notification Warning</p>
                 <p>{warning}</p>
               </div>
             )}
 
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-6" role="alert">
+              <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-400 px-4 py-3 rounded-lg mb-6" role="alert">
                 <p className="font-semibold">Error</p>
                 <p>{error}</p>
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
               {/* Name Field */}
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Your Name
                 </label>
                 <input
@@ -219,7 +219,7 @@ const ContactUs = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-transparent outline-none"
+                  className="w-full px-4 py-2.5 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-600 dark:focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white outline-none text-base"
                   placeholder="John Doe"
                   required
                   disabled={loading}
@@ -228,7 +228,7 @@ const ContactUs = () => {
 
               {/* Email Field */}
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Email Address
                 </label>
                 <input
@@ -237,7 +237,7 @@ const ContactUs = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-transparent outline-none"
+                  className="w-full px-4 py-2.5 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-600 dark:focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white outline-none text-base"
                   placeholder="john@example.com"
                   required
                   disabled={loading}
@@ -246,7 +246,7 @@ const ContactUs = () => {
 
               {/* Subject Field */}
               <div>
-                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Subject
                 </label>
                 <input
@@ -255,7 +255,7 @@ const ContactUs = () => {
                   name="subject"
                   value={formData.subject}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-transparent outline-none"
+                  className="w-full px-4 py-2.5 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-600 dark:focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white outline-none text-base"
                   placeholder="How can we help?"
                   required
                   disabled={loading}
@@ -264,7 +264,7 @@ const ContactUs = () => {
 
               {/* Message Field */}
               <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Message
                 </label>
                 <textarea
@@ -273,7 +273,7 @@ const ContactUs = () => {
                   value={formData.message}
                   onChange={handleChange}
                   rows="6"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-transparent outline-none resize-none"
+                  className="w-full px-4 py-2.5 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-600 dark:focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white outline-none resize-none text-base"
                   placeholder="Please describe your inquiry or feedback..."
                   required
                   disabled={loading}
@@ -284,7 +284,7 @@ const ContactUs = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-primary-600 text-white font-semibold py-3 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-primary-600 dark:bg-primary-500 text-white font-semibold py-3 sm:py-3.5 rounded-lg hover:bg-primary-700 dark:hover:bg-primary-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-base"
               >
                 {loading ? 'Sending...' : 'Send Message'}
               </button>
@@ -292,9 +292,9 @@ const ContactUs = () => {
           </div>
 
           {/* Additional Info */}
-          <div className="mt-12 bg-blue-50 border border-blue-200 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-blue-900 mb-2">Privacy Notice</h3>
-            <p className="text-blue-800">
+          <div className="mt-10 sm:mt-12 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
+            <h3 className="text-base sm:text-lg font-semibold text-blue-900 dark:text-blue-400 mb-2">Privacy Notice</h3>
+            <p className="text-blue-800 dark:text-blue-300 text-sm sm:text-base">
               Your information will be treated according to our <a href="/privacy-policy" className="font-semibold hover:underline">Privacy Policy</a>. We take your privacy seriously and will only use the information you provide to respond to your inquiry.
             </p>
           </div>

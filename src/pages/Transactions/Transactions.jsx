@@ -190,31 +190,31 @@ export default function Transactions() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 dark:border-primary-400"></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 overflow-x-hidden">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Transactions</h1>
-          <p className="text-gray-600 mt-1">Manage your income and expenses</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Transactions</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">Manage your income and expenses</p>
         </div>
-        <div className="flex space-x-3">
-          <button onClick={handleToggleSelectionMode} className="btn-secondary">
+        <div className="flex flex-wrap gap-2">
+          <button onClick={handleToggleSelectionMode} className="btn-secondary text-sm">
             {selectionMode ? 'Cancel Select' : 'Select'}
           </button>
           {selectionMode && (
             <>
-              <button onClick={handleSelectAllTransactions} className="btn-secondary">
+              <button onClick={handleSelectAllTransactions} className="btn-secondary text-sm">
                 Select All
               </button>
               <button
                 onClick={confirmDeleteSelectedTransactions}
-                className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+                className="px-3 py-2 rounded-md bg-red-600 text-white text-sm hover:bg-red-700 disabled:opacity-50"
                 disabled={selectedTransactionIds.length === 0}
               >
                 Delete Selected
@@ -223,16 +223,19 @@ export default function Transactions() {
           )}
           <button
             onClick={handleExport}
-            className="btn-secondary"
+            className="btn-secondary text-sm"
             disabled={filteredTransactions.length === 0}
           >
             Export CSV
           </button>
           <button
             onClick={() => setShowForm(true)}
-            className="btn-primary"
+            className="btn-primary flex items-center space-x-2 text-sm"
           >
-            Add Transaction
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            <span>Add Transaction</span>
           </button>
         </div>
       </div>

@@ -123,7 +123,7 @@ export default function Goals() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 dark:border-primary-400"></div>
       </div>
     );
   }
@@ -133,8 +133,8 @@ export default function Goals() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Savings Goals</h1>
-          <p className="text-gray-600 mt-1">Track your financial goals</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Savings Goals</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">Track your financial goals</p>
         </div>
         <div className="flex space-x-3">
           <button onClick={handleToggleSelectionMode} className="btn-secondary">
@@ -175,11 +175,11 @@ export default function Goals() {
       {/* Goals Grid */}
       {goals.length === 0 ? (
         <div className="card text-center py-12">
-          <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
           </svg>
-          <p className="mt-2 text-gray-500">No goals yet</p>
-          <p className="text-sm text-gray-400">Set your first savings goal to start tracking</p>
+          <p className="mt-2 text-gray-500 dark:text-gray-400">No goals yet</p>
+          <p className="text-sm text-gray-400 dark:text-gray-500">Set your first savings goal to start tracking</p>
         </div>
       ) : (
         <div className="max-h-[65vh] overflow-y-auto">

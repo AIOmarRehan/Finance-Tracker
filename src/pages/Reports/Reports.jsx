@@ -111,45 +111,45 @@ export default function Reports() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 dark:border-primary-400"></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 overflow-x-hidden">
       {/* Header */}
-      <div className="flex justify-between items-start">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Reports & Analytics</h1>
-          <p className="text-gray-600 mt-1">Visualize your financial data</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Reports & Analytics</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">Visualize your financial data</p>
         </div>
-        <div className="flex space-x-3">
-          <button onClick={handleExportCSV} className="btn-secondary">
+        <div className="flex flex-wrap gap-2">
+          <button onClick={handleExportCSV} className="btn-secondary text-sm">
             Export CSV
           </button>
-          <button onClick={handleExportPDF} className="btn-secondary">
+          <button onClick={handleExportPDF} className="btn-secondary text-sm">
             Export PDF
           </button>
         </div>
       </div>
 
       {/* Date Range Selector */}
-      <div className="card">
-        <div className="flex flex-wrap items-center gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+      <div className="card overflow-x-hidden">
+        <div className="flex flex-wrap items-start gap-4 min-w-0">
+          <div className="min-w-0">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Time Period
             </label>
-            <div className="flex space-x-2">
+            <div className="flex flex-wrap gap-2">
               {['week', 'month', 'year', 'custom'].map((range) => (
                 <button
                   key={range}
                   onClick={() => setDateRange(range)}
-                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  className={`px-3 py-2 text-sm rounded-lg font-medium transition-colors whitespace-nowrap ${
                     dateRange === range
                       ? 'bg-primary-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                   }`}
                 >
                   {range.charAt(0).toUpperCase() + range.slice(1)}
@@ -159,9 +159,9 @@ export default function Reports() {
           </div>
 
           {dateRange === 'custom' && (
-            <div className="flex items-end space-x-3">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">From</label>
+            <div className="w-full sm:w-auto grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="min-w-0">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">From</label>
                 <input
                   type="date"
                   value={customRange.start}
@@ -169,8 +169,8 @@ export default function Reports() {
                   className="input-field"
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">To</label>
+              <div className="min-w-0">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">To</label>
                 <input
                   type="date"
                   value={customRange.end}
@@ -186,16 +186,18 @@ export default function Reports() {
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="card border-l-4 border-green-500">
-          <p className="text-sm font-medium text-gray-600">Total Income</p>
-          <p className="text-2xl font-bold text-green-600 mt-2">{formatCurrency(totals.income)}</p>
+          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Income</p>
+          <p className="text-2xl font-bold text-green-600 dark:text-green-400 mt-2">{formatCurrency(totals.income)}</p>
         </div>
         <div className="card border-l-4 border-red-500">
-          <p className="text-sm font-medium text-gray-600">Total Expenses</p>
-          <p className="text-2xl font-bold text-red-600 mt-2">{formatCurrency(totals.expenses)}</p>
+          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Expenses</p>
+          <p className="text-2xl font-bold text-red-600 dark:text-red-400 mt-2">{formatCurrency(totals.expenses)}</p>
         </div>
         <div className="card border-l-4 border-blue-500">
-          <p className="text-sm font-medium text-gray-600">Net Balance</p>
-          <p className={`text-2xl font-bold mt-2 ${totals.balance >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
+          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Net Balance</p>
+          <p className={`text-2xl font-bold mt-2 ${
+            totals.balance >= 0 ? 'text-blue-600 dark:text-blue-400' : 'text-red-600 dark:text-red-400'
+          }`}>
             {formatCurrency(totals.balance)}
           </p>
         </div>
@@ -216,11 +218,11 @@ export default function Reports() {
         </div>
       ) : (
         <div className="card text-center py-12">
-          <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
           </svg>
-          <p className="mt-2 text-gray-500">No data for selected period</p>
-          <p className="text-sm text-gray-400">Add transactions to see reports</p>
+          <p className="mt-2 text-gray-500 dark:text-gray-400">No data for selected period</p>
+          <p className="text-sm text-gray-400 dark:text-gray-500">Add transactions to see reports</p>
         </div>
       )}
     </div>

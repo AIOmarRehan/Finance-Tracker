@@ -44,17 +44,17 @@ export default function TransactionForm({ transaction, categories, onSubmit, onC
   const filteredCategories = categories.filter(cat => cat.type === formData.type);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
         <div className="p-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
             {transaction ? 'Edit Transaction' : 'Add Transaction'}
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Type */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Type
               </label>
               <div className="grid grid-cols-2 gap-3">
@@ -63,29 +63,35 @@ export default function TransactionForm({ transaction, categories, onSubmit, onC
                   onClick={() => setFormData(prev => ({ ...prev, type: 'income', category: '' }))}
                   className={`p-3 rounded-lg border-2 font-medium transition-colors ${
                     formData.type === 'income'
-                      ? 'border-green-500 bg-green-50 text-green-700'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-green-500 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+                      : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 dark:text-gray-300'
                   }`}
                 >
-                  📈 Income
+                  <span className="flex items-center justify-center space-x-2">
+                    <img src="/icons/income.svg" alt="" className="w-5 h-5" />
+                    <span>Income</span>
+                  </span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setFormData(prev => ({ ...prev, type: 'expense', category: '' }))}
                   className={`p-3 rounded-lg border-2 font-medium transition-colors ${
                     formData.type === 'expense'
-                      ? 'border-red-500 bg-red-50 text-red-700'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-red-500 bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400'
+                      : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 dark:text-gray-300'
                   }`}
                 >
-                  📉 Expense
+                  <span className="flex items-center justify-center space-x-2">
+                    <img src="/icons/expenses.svg" alt="" className="w-5 h-5" />
+                    <span>Expense</span>
+                  </span>
                 </button>
               </div>
             </div>
 
             {/* Description */}
             <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Description *
               </label>
               <input
@@ -102,11 +108,11 @@ export default function TransactionForm({ transaction, categories, onSubmit, onC
 
             {/* Amount */}
             <div>
-              <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="amount" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Amount *
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-2 text-gray-500">$</span>
+                <span className="absolute left-3 top-2 text-gray-500 dark:text-gray-400">$</span>
                 <input
                   type="number"
                   id="amount"
@@ -124,7 +130,7 @@ export default function TransactionForm({ transaction, categories, onSubmit, onC
 
             {/* Category */}
             <div>
-              <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Category *
               </label>
               <select
@@ -146,7 +152,7 @@ export default function TransactionForm({ transaction, categories, onSubmit, onC
 
             {/* Date */}
             <div>
-              <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="date" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Date *
               </label>
               <input
@@ -162,7 +168,7 @@ export default function TransactionForm({ transaction, categories, onSubmit, onC
 
             {/* Notes */}
             <div>
-              <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="notes" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Notes (optional)
               </label>
               <textarea

@@ -14,21 +14,21 @@ export default function TransactionFilters({ filters, onFilterChange, categories
   }
 
   return (
-    <div className="card">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
+    <div className="card overflow-x-hidden">
+      <div className="flex flex-wrap justify-between items-center gap-2 mb-4">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Filters</h2>
         <button
           onClick={clearFilters}
-          className="text-sm text-primary-600 hover:text-primary-700"
+          className="text-sm whitespace-nowrap text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300"
         >
           Clear All
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 min-w-0">
         {/* Search */}
         <div className="lg:col-span-2">
-          <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="search" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Search
           </label>
           <input
@@ -43,7 +43,7 @@ export default function TransactionFilters({ filters, onFilterChange, categories
 
         {/* Type */}
         <div>
-          <label htmlFor="type" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="type" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Type
           </label>
           <select
@@ -60,7 +60,7 @@ export default function TransactionFilters({ filters, onFilterChange, categories
 
         {/* Category */}
         <div>
-          <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Category
           </label>
           <select
@@ -80,7 +80,7 @@ export default function TransactionFilters({ filters, onFilterChange, categories
 
         {/* Date From */}
         <div>
-          <label htmlFor="dateFrom" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="dateFrom" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             From Date
           </label>
           <input
@@ -94,7 +94,7 @@ export default function TransactionFilters({ filters, onFilterChange, categories
 
         {/* Date To */}
         <div>
-          <label htmlFor="dateTo" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="dateTo" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             To Date
           </label>
           <input

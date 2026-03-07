@@ -35,27 +35,27 @@ export default function QuickActions() {
   ];
 
   const colorClasses = {
-    primary: 'bg-primary-100 text-primary-600 hover:bg-primary-200',
-    purple: 'bg-purple-100 text-purple-600 hover:bg-purple-200',
-    green: 'bg-green-100 text-green-600 hover:bg-green-200',
-    orange: 'bg-orange-100 text-orange-600 hover:bg-orange-200'
+    primary: 'bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 hover:bg-primary-200 dark:hover:bg-primary-900/50',
+    purple: 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 hover:bg-purple-200 dark:hover:bg-purple-900/50',
+    green: 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/50',
+    orange: 'bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 hover:bg-orange-200 dark:hover:bg-orange-900/50'
   };
 
   return (
     <div className="card">
-      <h2 className="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
+      <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {actions.map((action) => (
           <button
             key={action.title}
             onClick={() => navigate(action.path)}
-            className={`p-4 rounded-lg transition-colors duration-200 text-left ${colorClasses[action.color]} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-${action.color}-500`}
+            className={`p-4 rounded-lg transition-colors duration-200 text-left w-full ${colorClasses[action.color]} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-${action.color}-500`}
           >
             <svg className="h-8 w-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={action.icon} />
             </svg>
             <h3 className="font-semibold">{action.title}</h3>
-            <p className="text-sm opacity-75 mt-1">{action.description}</p>
+            <p className="text-sm opacity-80 mt-1">{action.description}</p>
           </button>
         ))}
       </div>

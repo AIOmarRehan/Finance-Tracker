@@ -62,6 +62,9 @@ export default function TrendChart({ transactions }) {
     plugins: {
       legend: {
         position: 'top',
+        labels: {
+          color: document.documentElement.classList.contains('dark') ? '#d1d5db' : '#374151'
+        }
       },
       tooltip: {
         mode: 'index',
@@ -79,7 +82,19 @@ export default function TrendChart({ transactions }) {
         ticks: {
           callback: function(value) {
             return '$' + value;
-          }
+          },
+          color: document.documentElement.classList.contains('dark') ? '#9ca3af' : '#374151'
+        },
+        grid: {
+          color: document.documentElement.classList.contains('dark') ? 'rgba(75, 85, 99, 0.3)' : 'rgba(0, 0, 0, 0.1)'
+        }
+      },
+      x: {
+        ticks: {
+          color: document.documentElement.classList.contains('dark') ? '#9ca3af' : '#374151'
+        },
+        grid: {
+          color: document.documentElement.classList.contains('dark') ? 'rgba(75, 85, 99, 0.3)' : 'rgba(0, 0, 0, 0.1)'
         }
       }
     }
@@ -87,13 +102,13 @@ export default function TrendChart({ transactions }) {
 
   return (
     <div className="card">
-      <h2 className="text-xl font-semibold text-gray-900 mb-4">Income vs Expenses Trend</h2>
+      <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Income vs Expenses Trend</h2>
       {dates.length > 0 ? (
         <div className="w-full h-80">
           <Line data={chartData} options={options} />
         </div>
       ) : (
-        <p className="text-center text-gray-500 py-8">No trend data available</p>
+        <p className="text-center text-gray-500 dark:text-gray-400 py-8">No trend data available</p>
       )}
     </div>
   );

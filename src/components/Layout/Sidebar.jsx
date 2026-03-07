@@ -15,7 +15,7 @@ export default function Sidebar({ isOpen, onClose }) {
       {/* Mobile overlay */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
+          className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-20 md:hidden"
           onClick={onClose}
           aria-hidden="true"
         />
@@ -23,33 +23,33 @@ export default function Sidebar({ isOpen, onClose }) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-30 overflow-y-auto
-          md:static md:top-auto md:left-auto md:h-auto md:min-h-[calc(100vh-4rem)] md:shadow-none md:border-r md:border-gray-200 md:z-auto
+        className={`fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-white dark:bg-gray-800 shadow-lg transform transition-transform duration-300 ease-in-out z-30 overflow-y-auto
+          md:static md:top-auto md:left-auto md:h-auto md:min-h-[calc(100vh-4rem)] md:shadow-none md:border-r md:border-gray-200 dark:md:border-gray-700 md:z-auto
           ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
         role="navigation"
         aria-label="Sidebar navigation"
       >
         <nav className="p-4 space-y-2">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              onClick={onClose}
-              className={({ isActive }) =>
-                `flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 ${
-                  isActive
-                    ? 'bg-primary-600 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`
-              }
-            >
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
-              </svg>
-              <span className="font-medium">{item.label}</span>
-            </NavLink>
-          ))}
-        </nav>
+        {navItems.map((item) => (
+          <NavLink
+            key={item.path}
+            to={item.path}
+            onClick={onClose}
+            className={({ isActive }) =>
+              `flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 ${
+                isActive
+                  ? 'bg-primary-600 dark:bg-primary-500 text-white'
+                  : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
+              }`
+            }
+          >
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
+            </svg>
+            <span className="font-medium">{item.label}</span>
+          </NavLink>
+        ))}
+      </nav>
       </aside>
     </>
   );
