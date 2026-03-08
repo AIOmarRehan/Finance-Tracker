@@ -7,6 +7,9 @@ const TermsOfService = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
+      
+      {/* Spacer for fixed navbar */}
+      <div className="h-16"></div>
 
       <main className="flex-grow bg-white dark:bg-gray-900">
         <div className="max-w-4xl mx-auto px-4 py-16">

@@ -129,6 +129,9 @@ const ContactUs = () => {
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-gray-900">
       <Navbar />
+      
+      {/* Spacer for fixed navbar */}
+      <div className="h-16"></div>
 
       <main className="flex-grow">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
