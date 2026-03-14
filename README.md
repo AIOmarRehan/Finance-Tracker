@@ -139,4 +139,4 @@ Contributions are welcome! Please fork the repository and submit a pull request 
 
 ## Contact
 
-For any inquiries, please contact [your-email@example.com](mailto:your-email@example.com).
+For any inquiries, please contact [ai.omar.rehan@gmail.com](mailto:ai.omar.rehan@gmail.com).
